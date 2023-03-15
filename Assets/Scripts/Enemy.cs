@@ -22,4 +22,8 @@ public class Enemy : MonoBehaviour
     {
         enemyHP -= damage;
     }
+    public void Q()
+    {
+        Debug.Log("гоюл");
+    }
 }

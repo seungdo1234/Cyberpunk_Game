@@ -6,13 +6,15 @@ public class Player : MonoBehaviour
     public float maxSpeed;
     public float jumpPower;
     private bool isAttacking = false; // 공격 딜레이
-    public Transform pos; 
-    public Vector2 boxSize;
+    public Transform pos;  // 히팅 박스 위치
+    public Vector2 boxSize; // 박스 크기
 
     private Rigidbody2D rigid;
     private CapsuleCollider2D capsuleColider;
     private SpriteRenderer spriteRenderer;
     private Animator anim;
+    [SerializeField]
+    private Background_Scroller background_Scroller;
     // Start is called before the first frame update
     void Awake()
     {
@@ -89,13 +91,14 @@ public class Player : MonoBehaviour
         float h = Input.GetAxisRaw("Horizontal");
         rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
-
         if (rigid.velocity.x > maxSpeed) // Right MaxSpeed
         {
+            background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
             rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
         }
         else if (rigid.velocity.x < maxSpeed * (-1)) // Left MaxSpeed
         {
+            background_Scroller.BG_Scroll(-0.1f); // 왼쪽으로 배경 스크롤
             rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
         }
 
