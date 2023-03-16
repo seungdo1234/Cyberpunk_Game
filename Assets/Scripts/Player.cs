@@ -8,11 +8,12 @@ public class Player : MonoBehaviour
     private bool isAttacking = false; // 공격 딜레이
     public Transform pos;  // 히팅 박스 위치
     public Vector2 boxSize; // 박스 크기
-
+  
     private Rigidbody2D rigid;
     private CapsuleCollider2D capsuleColider;
     private SpriteRenderer spriteRenderer;
     private Animator anim;
+    private Transform playerPos;
     [SerializeField]
     private Background_Scroller background_Scroller;
     // Start is called before the first frame update
@@ -22,106 +23,146 @@ public class Player : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         capsuleColider = GetComponent<CapsuleCollider2D>();
+        playerPos = GetComponent<Transform>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // 점프
-        if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
+        if (isAttacking == false)
         {
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-            //    anim.SetBool("isRunning", false);
-            anim.SetBool("isJumpping", true);
-        }
-
-
-        // Stop Speed
-        if (Input.GetButtonUp("Horizontal"))
-        {
-            // normalized : 단위 벡터를 -1,1로 만들어줌
-            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
-        }
-
-        // 방향 전환
-        if (Input.GetButton("Horizontal"))
-        {
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-        }
-
-        // animation
-        if (Mathf.Abs(rigid.velocity.x) < 0.4)
-        {
-            anim.SetBool("isRunning", false);
-        }
-        else
-        {
-            anim.SetBool("isRunning", true);
-        }
-
-        if (isAttacking == false && Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            isAttacking = true;
-            anim.SetTrigger("isAttacking");
-            Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize,0);
-            foreach (Collider2D collider in collider2Ds)
+            // 점프
+            if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
             {
-                if (collider.tag == "Enemy")
+                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                anim.SetBool("isJumpping", true);
+            }
+
+
+            // Stop Speed
+            if (Input.GetButtonUp("Horizontal"))
+            {
+                // normalized : 단위 벡터를 -1,1로 만들어줌
+                rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
+            }
+            // 방향 전환
+            if (Input.GetButton("Horizontal"))
+            {
+                spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+
+                // Flip시 좌우로 히팅 박스 위치 변경 
+                if (spriteRenderer.flipX == true)
                 {
-                    collider.GetComponent<Enemy>().OnDamaged(1);
+                    pos.position = new Vector3(playerPos.position.x - 1.1f , playerPos.position.y , 0);
+                }
+                else
+                {
+                    pos.position = new Vector3(playerPos.position.x + 1.1f, playerPos.position.y , 0);
                 }
             }
-            StartCoroutine(AttackDelay());
+
+            // animation
+            if (Mathf.Abs(rigid.velocity.x) < 0.4)
+            {
+                anim.SetBool("isRunning", false);
+            }
+            else
+            {
+                anim.SetBool("isRunning", true);
+            }
+
+            if (!anim.GetBool("isJumpping") && Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                anim.SetTrigger("ComboAtk1");
+                StartCoroutine(EnemyAttack(0.8f, 1)); // Enemy공격
+
+                StartCoroutine(ComboAtk2(0.8f)); // 콤보어택 시작
+            }
+        }
+    }
+    private IEnumerator ComboAtk2(float atkDelay)
+    {
+        int combo = 1;
+        isAttacking = true;
+        while (atkDelay >= 0) // 공격 딜레이 안에 공격키를 누를 시 콤보 어택 발동
+        {
+            yield return null; // 리턴을 반복문 아래에 두면 첫 프레임에 공격 키가 인식이 됌 
+          //  Debug.Log(atkDelay);
+            if (combo == 1 && Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 1
+            {
+                anim.SetTrigger("ComboAtk2");
+                atkDelay = 0.8f;
+                StartCoroutine(EnemyAttack(0.8f,1));
+                combo++;
+            }
+            else if (combo == 2 && Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 2
+            {
+                anim.SetTrigger("ComboAtk3");
+                StartCoroutine(EnemyAttack(1.8f,3));
+                atkDelay = 1.6f;
+                combo = 0;
+            }
+            atkDelay -= Time.deltaTime;
+        }
+        isAttacking = false;
+    }
+    private IEnumerator EnemyAttack(float delay,int damage) 
+    {
+        yield return new WaitForSeconds(delay); // EnemyHP -- 하는 타이밍을 맞추기 위해 공격 딜레이 만큼 기다림  
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
+        foreach (Collider2D collider in collider2Ds)
+        {
+            if (collider.tag == "Enemy")
+            {
+                collider.GetComponent<Enemy>().OnDamaged(damage);
+            }
         }
     }
     private void OnDrawGizmos() // 공격 범위는 눈에 보이지 않기 때문에 기즈모를 활용하여 그림-
     {
-        Gizmos.color = Color.blue;
+        Gizmos.color = Color.red;
         Gizmos.DrawWireCube(pos.position, boxSize);
-    }
-    private IEnumerator AttackDelay() // 공격 딜레이를 위한 코루틴 (Update문에 쓸 경우 프레임 드랍 유발)
-    {
-        yield return new WaitForSeconds(2.5f);
-        isAttacking = false;
     }
     // 연속적 입력은 FixedUpdate
     void FixedUpdate()
     {
-        // 이동
-        float h = Input.GetAxisRaw("Horizontal");
-        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
+        if (isAttacking == false)
+        {
+            // 이동
+            float h = Input.GetAxisRaw("Horizontal");
+            rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
-        if (rigid.velocity.x > maxSpeed) // Right MaxSpeed
-        {
-            background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
-            rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
-        }
-        else if (rigid.velocity.x < maxSpeed * (-1)) // Left MaxSpeed
-        {
-            background_Scroller.BG_Scroll(-0.1f); // 왼쪽으로 배경 스크롤
-            rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
-        }
-
-        // # 점프 착지
-        // RayCast : 오브젝트 검색을 위해 Ray를 쏘는 방식
-        // LayerMask : 물리 효과를 구분하는 정수 값 
-        // 빔을 밑으로 한칸 쏨
-        if (rigid.velocity.y < 0)
-        {
-            Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
-            // 빔에 맞은 오브젝트의 정보
-            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
-            // 관통 x
-            if (rayHit.collider != null)
+            if (rigid.velocity.x > maxSpeed) // Right MaxSpeed
             {
-                // distance : Ray에 닿았을 때의 거리
-                if (rayHit.distance < 1.0f)
+                background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
+                rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
+            }
+            else if (rigid.velocity.x < maxSpeed * (-1)) // Left MaxSpeed
+            {
+                background_Scroller.BG_Scroll(-0.1f); // 왼쪽으로 배경 스크롤
+                rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
+            }
+
+            // # 점프 착지
+            // RayCast : 오브젝트 검색을 위해 Ray를 쏘는 방식
+            // LayerMask : 물리 효과를 구분하는 정수 값 
+            // 빔을 밑으로 한칸 쏨
+            if (rigid.velocity.y < 0)
+            {
+                Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
+                // 빔에 맞은 오브젝트의 정보
+                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
+                // 관통 x
+                if (rayHit.collider != null)
                 {
-                    anim.SetBool("isJumpping", false);
-                    Debug.Log("땅에 닿음");
+                    // distance : Ray에 닿았을 때의 거리
+                    if (rayHit.distance < 1.0f)
+                    {
+                        anim.SetBool("isJumpping", false);
+                        Debug.Log("땅에 닿음");
+                    }
                 }
             }
         }
     }
-
 }
