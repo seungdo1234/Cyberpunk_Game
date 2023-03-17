@@ -261,7 +261,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1221556662}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: ffa451314e078c3489bb1560a803adc3, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -502,7 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6017a47e394a193428857fe93f36f3e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyHP: 5
+  enemyHP: 100
 --- !u!1001 &1675078047067663623
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -544,6 +544,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1675078046587950156, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1675078046751730737, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_UsedByEffector
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1675078046751730739, guid: c875fa190835cc544aa39fd95c05540d, type: 3}

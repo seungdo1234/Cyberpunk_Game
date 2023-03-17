@@ -98,7 +98,7 @@ public class Player : MonoBehaviour
             else if (combo == 2 && Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 2
             {
                 anim.SetTrigger("ComboAtk3");
-                StartCoroutine(EnemyAttack(1.8f,3));
+                StartCoroutine(EnemyAttack(1.2f,3));
                 atkDelay = 1.6f;
                 combo = 0;
             }
@@ -149,6 +149,10 @@ public class Player : MonoBehaviour
             // 빔을 밑으로 한칸 쏨
             if (rigid.velocity.y < 0)
             {
+                if (!anim.GetBool("isJumpping")) // 점프를 누르지 않고 떨어질 때 점프 모션이 나오게 함
+                {
+                    anim.SetBool("isJumpping", true);
+                }
                 Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
                 // 빔에 맞은 오브젝트의 정보
                 RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
