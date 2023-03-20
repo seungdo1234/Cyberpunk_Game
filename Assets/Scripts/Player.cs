@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
     public float maxSpeed;
     public float jumpPower;
     private bool isAttacking = false; // 공격 딜레이
+    private bool isThrowing = false; // 투척 딜레이
+    private bool ThrowSkill = false; // 스킬 On
     public Transform pos;  // 히팅 박스 위치
     public Vector2 boxSize; // 박스 크기
   
@@ -16,6 +18,10 @@ public class Player : MonoBehaviour
     private Transform playerPos;
     [SerializeField]
     private Background_Scroller background_Scroller;
+    [SerializeField]
+    private Transform throwPos; // 발사체 생성 위치
+    [SerializeField]
+    private GameObject knifePrefab; //  발사체 프리팹
     // Start is called before the first frame update
     void Awake()
     {
@@ -29,7 +35,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isAttacking == false)
+        if (isAttacking == false && isThrowing == false)
         {
             // 점프
             if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
@@ -71,12 +77,16 @@ public class Player : MonoBehaviour
                 anim.SetBool("isRunning", true);
             }
 
-            if (!anim.GetBool("isJumpping") && Input.GetKeyDown(KeyCode.LeftControl))
+            if (!anim.GetBool("isJumpping") && isThrowing == false && Input.GetKeyDown(KeyCode.LeftControl)) // Attack
             {
                 anim.SetTrigger("ComboAtk1");
                 StartCoroutine(EnemyAttack(0.8f, 1)); // Enemy공격
 
                 StartCoroutine(ComboAtk2(0.8f)); // 콤보어택 시작
+            }
+            else if (ThrowSkill == false && Input.GetKeyDown(KeyCode.Z)) // ThorwKnife
+            {
+                StartCoroutine(ThrowKnife());
             }
         }
     }
@@ -99,12 +109,29 @@ public class Player : MonoBehaviour
             {
                 anim.SetTrigger("ComboAtk3");
                 StartCoroutine(EnemyAttack(1.2f,3));
-                atkDelay = 1.6f;
+                atkDelay = 1.4f;
                 combo = 0;
             }
             atkDelay -= Time.deltaTime;
         }
         isAttacking = false;
+    }
+    private IEnumerator ThrowKnife()
+    {
+        float ThrowCoolTime = 5f;
+        ThrowSkill = true;
+        isThrowing = true;
+        anim.SetTrigger("ThrowKnife");
+        GameObject clone = Instantiate(knifePrefab, throwPos.position, Quaternion.identity);
+        yield return new WaitForSeconds(.5f);
+        isThrowing = false;
+        while (ThrowCoolTime >= 0)
+        {
+            ThrowCoolTime -= Time.deltaTime;
+            yield return null;
+        }
+        Debug.Log("스킬 ON");
+        ThrowSkill = false;
     }
     private IEnumerator EnemyAttack(float delay,int damage) 
     {
@@ -118,6 +145,7 @@ public class Player : MonoBehaviour
             }
         }
     }
+
     private void OnDrawGizmos() // 공격 범위는 눈에 보이지 않기 때문에 기즈모를 활용하여 그림-
     {
         Gizmos.color = Color.red;
@@ -126,7 +154,7 @@ public class Player : MonoBehaviour
     // 연속적 입력은 FixedUpdate
     void FixedUpdate()
     {
-        if (isAttacking == false)
+        if (isAttacking == false && isThrowing == false)
         {
             // 이동
             float h = Input.GetAxisRaw("Horizontal");
@@ -165,6 +193,13 @@ public class Player : MonoBehaviour
                         anim.SetBool("isJumpping", false);
                         Debug.Log("땅에 닿음");
                     }
+                }
+            }
+            else if(rigid.velocity.y == 0)
+            {
+                if (anim.GetBool("isJumpping"))
+                {
+                    anim.SetBool("isJumpping", false);
                 }
             }
         }
