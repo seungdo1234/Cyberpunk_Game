@@ -3,7 +3,7 @@ guid: c38721d38645aa54c9108ffa05cca255
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -20,7 +20,6 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
@@ -64,7 +63,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
-  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -109,12 +108,12 @@ TextureImporter:
       name: PlayerTeleport_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 474
-        height: 555
+        x: 198
+        y: 117
+        width: 108
+        height: 135
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -130,12 +129,12 @@ TextureImporter:
       name: PlayerTeleport_1
       rect:
         serializedVersion: 2
-        x: 474
-        y: 0
-        width: 474
-        height: 555
+        x: 672
+        y: 117
+        width: 114
+        height: 135
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -151,12 +150,12 @@ TextureImporter:
       name: PlayerTeleport_2
       rect:
         serializedVersion: 2
-        x: 948
-        y: 0
-        width: 474
-        height: 555
+        x: 1152
+        y: 117
+        width: 117
+        height: 132
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -172,12 +171,12 @@ TextureImporter:
       name: PlayerTeleport_3
       rect:
         serializedVersion: 2
-        x: 1422
-        y: 0
-        width: 474
-        height: 555
+        x: 1599
+        y: 117
+        width: 156
+        height: 132
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -193,12 +192,12 @@ TextureImporter:
       name: PlayerTeleport_4
       rect:
         serializedVersion: 2
-        x: 1896
-        y: 0
-        width: 474
-        height: 555
+        x: 2079
+        y: 117
+        width: 147
+        height: 132
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -214,12 +213,12 @@ TextureImporter:
       name: PlayerTeleport_5
       rect:
         serializedVersion: 2
-        x: 2370
-        y: 0
-        width: 474
-        height: 555
+        x: 2559
+        y: 117
+        width: 138
+        height: 132
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -235,12 +234,12 @@ TextureImporter:
       name: PlayerTeleport_6
       rect:
         serializedVersion: 2
-        x: 2844
-        y: 0
-        width: 474
-        height: 555
+        x: 3000
+        y: 237
+        width: 144
+        height: 153
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -256,12 +255,12 @@ TextureImporter:
       name: PlayerTeleport_7
       rect:
         serializedVersion: 2
-        x: 3318
-        y: 0
-        width: 474
-        height: 555
+        x: 3474
+        y: 237
+        width: 144
+        height: 153
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -277,12 +276,12 @@ TextureImporter:
       name: PlayerTeleport_8
       rect:
         serializedVersion: 2
-        x: 3792
-        y: 0
-        width: 474
-        height: 555
+        x: 3951
+        y: 237
+        width: 141
+        height: 153
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -298,12 +297,12 @@ TextureImporter:
       name: PlayerTeleport_9
       rect:
         serializedVersion: 2
-        x: 4266
-        y: 0
-        width: 474
-        height: 555
+        x: 4419
+        y: 237
+        width: 132
+        height: 153
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -319,12 +318,12 @@ TextureImporter:
       name: PlayerTeleport_10
       rect:
         serializedVersion: 2
-        x: 4740
-        y: 0
-        width: 474
-        height: 555
+        x: 4905
+        y: 237
+        width: 123
+        height: 153
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -340,12 +339,12 @@ TextureImporter:
       name: PlayerTeleport_11
       rect:
         serializedVersion: 2
-        x: 5214
-        y: 0
-        width: 474
-        height: 555
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 5319
+        y: 81
+        width: 321
+        height: 462
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -361,12 +360,12 @@ TextureImporter:
       name: PlayerTeleport_12
       rect:
         serializedVersion: 2
-        x: 5688
-        y: 0
-        width: 474
-        height: 555
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 5829
+        y: 81
+        width: 285
+        height: 450
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -382,12 +381,12 @@ TextureImporter:
       name: PlayerTeleport_13
       rect:
         serializedVersion: 2
-        x: 6162
-        y: 0
-        width: 474
-        height: 555
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 6315
+        y: 81
+        width: 261
+        height: 435
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -408,7 +407,7 @@ TextureImporter:
         width: 474
         height: 555
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -448,6 +447,7 @@ TextureImporter:
       PlayerTeleport_9: -1314858816
   spritePackingTag: 
   pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

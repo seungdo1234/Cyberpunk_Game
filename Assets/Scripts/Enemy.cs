@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
     Animator anim;
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D capsuleColider;
+    [SerializeField]
+    Player player;
     public int nextMove;
     void Awake()
     {
@@ -66,8 +68,12 @@ public class Enemy : MonoBehaviour
         CancelInvoke();
         Invoke("Think", 3.0f);
     }
-    public void OnDamaged(int damage)
+    public void OnDamaged(int damage, int attackType)
     {
+        if(attackType == 2)
+        {
+           // player.EnemyInfo(this);
+        }
         enemyHP -= damage;
     }
 }
