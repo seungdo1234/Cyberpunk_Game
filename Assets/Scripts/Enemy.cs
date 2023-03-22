@@ -70,10 +70,11 @@ public class Enemy : MonoBehaviour
     }
     public void OnDamaged(int damage, int attackType)
     {
-        if(attackType == 2)
+        if(attackType == 2) // Enemy가 나이프에 맞았을 경우
         {
-           // player.EnemyInfo(this);
+            player.SpecialAttack(this, nextMove);
         }
         enemyHP -= damage;
     }
+
 }

@@ -350,10 +350,27 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6706399476768954190, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
   m_PrefabInstance: {fileID: 6706399475790590515}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1267684799}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb7700602f8a57045802d6d7dbe40ed2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1267684799 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6706399475603705330, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+  m_PrefabInstance: {fileID: 6706399475790590515}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1267684805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267684799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 369a65329bff23345ac8270c89688a9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1661962258
@@ -370,7 +387,8 @@ GameObject:
   - component: {fileID: 1661962264}
   - component: {fileID: 1661962260}
   - component: {fileID: 1661962259}
-  m_Layer: 0
+  - component: {fileID: 1661962265}
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -516,6 +534,18 @@ MonoBehaviour:
   enemyHP: 100
   player: {fileID: 1257301373}
   nextMove: 0
+--- !u!114 &1661962265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1661962258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02736a31cb3e2304e8ba9b3a3ddd5eb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6706399475790590515
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -527,6 +557,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6706399475603705330, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399475603705330, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399475717572340, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399476042380236, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399476198685420, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399476430251873, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6706399476768954190, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: Throwknife
       value: 
@@ -537,11 +591,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6706399476768954191, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.6757386
+      value: -3.41
       objectReference: {fileID: 0}
     - target: {fileID: 6706399476768954191, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.7549001
+      value: 2.15
       objectReference: {fileID: 0}
     - target: {fileID: 6706399476768954191, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -574,6 +628,18 @@ PrefabInstance:
     - target: {fileID: 6706399476768954191, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399476768954290, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399476768954290, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399476768954291, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_GravityScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c875fa190835cc544aa39fd95c05540d, type: 3}

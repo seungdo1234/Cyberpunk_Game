@@ -25,10 +25,10 @@ public class ThrowKnife : MonoBehaviour
 
     public IEnumerator Throwing()
     {
-        float throwing = 2f;
+        float throwing = .5f;
         while(throwing >= 0)
         {
-            transform.Translate(new Vector3(1 * throwDirection, 0, 0) * 15f * Time.deltaTime);
+            transform.Translate(new Vector3(1 * throwDirection, 0, 0) * 20f * Time.deltaTime);
             throwing -= Time.deltaTime;
           //  Debug.Log(throwing);
             yield return null;
@@ -55,7 +55,6 @@ public class ThrowKnife : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-   //     Debug.Log(spriteRenderer.flipX);
-     //   transform.Translate(new Vector3(1 * throwDirection, 0, 0) * 15f * Time.deltaTime);
+
     }
 }
