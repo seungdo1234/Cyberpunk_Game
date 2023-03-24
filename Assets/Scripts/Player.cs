@@ -9,8 +9,8 @@ public class Player : MonoBehaviour
     private bool isThrowing = false; // 투척 딜레이
     private bool throwSkill = false; // 스킬 On
     private bool teleportAttack = false; // 텔레포트 공격 모션 중
-    public Transform pos;  // 히팅 박스 위치
-    public Vector2 boxSize; // 박스 크기
+    public Transform[] pos;  // 히팅 박스 위치
+    public Vector2[] boxSize; // 박스 크기
   
     private Rigidbody2D rigid;
     private CapsuleCollider2D capsuleColider;
@@ -25,10 +25,11 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject knifePrefab; //  발사체 프리팹
     [SerializeField]
-    private ThrowKnife Throwknife;
+    private ThrowKnife throwKnife;
     // Start is called before the first frame update
     void Awake()
-    { 
+    {
+        throwKnife.ThrowTo(1f);
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
@@ -77,9 +78,7 @@ public class Player : MonoBehaviour
             if (!anim.GetBool("isJumpping") && isThrowing == false && Input.GetKeyDown(KeyCode.LeftControl)) // Attack
             {
                 anim.SetTrigger("ComboAtk1");
-                StartCoroutine(EnemyAttack(0.8f, 1)); // Enemy공격
-
-                StartCoroutine(ComboAtk2(1.084f)); // 콤보어택 시작
+                StartCoroutine(ComboAtk2(.9f)); // 콤보어택 시작
             }
             else if ( throwSkill == false && Input.GetKeyDown(KeyCode.Z)) // ThorwKnife
             {
@@ -93,20 +92,20 @@ public class Player : MonoBehaviour
     {
         if (spriteRenderer.flipX == true)
         {
-            Throwknife.ThrowTo(-1f); // 나이프 이동 방향
+            throwKnife.ThrowTo(-1f); // 나이프 이동 방향
             throwPos.position = new Vector3(playerPos.position.x - 0.7f, playerPos.position.y + 0.1f, 0); // 나이프 스폰 포인트 
-            pos.position = new Vector3(playerPos.position.x - 1.1f, playerPos.position.y, 0); // 히팅 박스
+            pos[0].position = new Vector3(playerPos.position.x - 1.1f, playerPos.position.y, 0); // 히팅 박스
         }
         else
         {
-            Throwknife.ThrowTo(1f);
+            throwKnife.ThrowTo(1f);
             throwPos.position = new Vector3(playerPos.position.x + 0.7f, playerPos.position.y + 0.1f, 0);
-            pos.position = new Vector3(playerPos.position.x + 1.1f, playerPos.position.y, 0);
+            pos[0].position = new Vector3(playerPos.position.x + 1.1f, playerPos.position.y, 0);
         }
     }
-    private IEnumerator ComboAtk2(float atkDelay)
+    private IEnumerator ComboAtk2(float atkDelay) // 콤보어택
     {
-        int combo = 1;
+        int combo = 1, animPlay = 1;
         isAttacking = true;
         while (atkDelay >= 0) // 공격 딜레이 안에 공격키를 누를 시 콤보 어택 발동
         {
@@ -117,8 +116,7 @@ public class Player : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 1
                 {
                     anim.SetTrigger("ComboAtk2");
-                    atkDelay = 0.51f;
-                    StartCoroutine(EnemyAttack(0.4f, 1));
+   //                 atkDelay = 0.5f;
                     combo++;
                 }
             }
@@ -127,16 +125,27 @@ public class Player : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 2
                 {
                     anim.SetTrigger("ComboAtk3");
-                    StartCoroutine(EnemyAttack(.7f, 3));
-                    atkDelay = 1.084f;
+   //                 atkDelay = 1.084f;
                     combo = 0;
                 }
+            }
+            if (animPlay == 1 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk2"))
+            {
+                animPlay++;
+                atkDelay = 0.4f;
+                Debug.Log(atkDelay);
+            }
+            else if (animPlay == 2 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk3"))
+            {
+                animPlay = 0;
+                atkDelay = .9f;
+                Debug.Log(atkDelay);
             }
             atkDelay -= Time.deltaTime;
         }
         isAttacking = false;
     }
-    private IEnumerator ThrowKnifeCoolTime()
+    private IEnumerator ThrowKnifeCoolTime() // Throw Skill 쿨타임
     {
         float ThrowCoolTime = 5f;
         while (ThrowCoolTime >= 0) // 쿨타임
@@ -148,7 +157,7 @@ public class Player : MonoBehaviour
         throwSkill = false;
         Debug.Log("스킬 ON");
     }
-    private IEnumerator IsThrowing()
+    private IEnumerator IsThrowing()// 던지기
     {
         throwSkill = true; // 스킬 On Off
         anim.SetTrigger("ThrowKnife");
@@ -163,7 +172,7 @@ public class Player : MonoBehaviour
         isThrowing = false; // 던지는 모션 끝
 
     }
-    public void SpecialAttack(Enemy enemy, int enemyMoveDirection)
+    public void SpecialAttack(Enemy enemy, int enemyMoveDirection) // Enemy가 나이프에 맞았을 때
     {
         this.enemy = enemy;
         //  anim.SetTrigger("TeleportAttack");
@@ -215,62 +224,29 @@ public class Player : MonoBehaviour
                 playerPos.position = new Vector3(enemy.transform.position.x + .3f, enemy.transform.position.y + 2f, 0);
             }
         }
-        rigid.gravityScale = .3f;
+        X_Flip();
+        rigid.gravityScale = .25f;
         yield return new WaitForSeconds(.9f);
         anim.SetBool("KnifeHit", false);
         teleportAttack = false;
-        X_Flip();
         rigid.gravityScale = 1f;
 
     }
-    private IEnumerator EnemyAttack(float delay,int damage) 
+    private void EnemyAtk(int damage) // 애니메이션 트리거 활용
     {
-        yield return new WaitForSeconds(delay); // EnemyHP -- 하는 타이밍을 맞추기 위해 공격 딜레이 만큼 기다림  
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos.position, boxSize, 0);
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos[0].position, boxSize[0], 0);
         foreach (Collider2D collider in collider2Ds)
         {
             if (collider.tag == "Enemy")
             {
-                collider.GetComponent<Enemy>().OnDamaged(damage,1);
+                collider.GetComponent<Enemy>().OnDamaged(damage, 1);
             }
         }
     }
-    
-    /*
-    public void EnemyInfo(Enemy enemy)
-    {
-        this.enemy = enemy;
-        StopCoroutine(ThrowKnifeCoolTime());
-        StartCoroutine(EnemyAttackMark(this.enemy));
-        this.enemy = null;
-    }
-    private IEnumerator EnemyAttackMark(Enemy enemy)
-    {
-        float skillCoolTime = 3f;
-        while(skillCoolTime >= 0)
-        { 
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                anim.SetTrigger("Teleport");
-                yield return new WaitForSeconds(1f);
-                anim.SetTrigger("TeleportAttack");
-                break;
-            }
-            skillCoolTime -= Time.deltaTime;
-            yield return null;
-            //   Debug.Log(enemy.transform.position);
-            // Debug.Log(skillCoolTime);
-        }
-
-        yield return new WaitForSeconds(5f);
-        ThrowSkill = false;
-        Debug.Log("나감");
-    }
-    */
     private void OnDrawGizmos() // 공격 범위는 눈에 보이지 않기 때문에 기즈모를 활용하여 그림-
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(pos.position, boxSize);
+        Gizmos.DrawWireCube(pos[0].position, boxSize[0]);
     }
     // 연속적 입력은 FixedUpdate
     void FixedUpdate()

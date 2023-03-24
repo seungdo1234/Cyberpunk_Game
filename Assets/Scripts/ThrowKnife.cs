@@ -5,7 +5,7 @@ using UnityEngine;
 public class ThrowKnife : MonoBehaviour
 {
     [SerializeField]
-    private float throwDirection = 1f; // 던지는 방향
+    private float throwDirection; // 던지는 방향
     private SpriteRenderer spriteRenderer;
     // Start is called before the first frame update
     void Awake()
@@ -51,7 +51,7 @@ public class ThrowKnife : MonoBehaviour
         }
         StartCoroutine(Throwing());
     }
-
+  
     // Update is called once per frame
     void Update()
     {
