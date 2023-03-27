@@ -25,11 +25,11 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject knifePrefab; //  발사체 프리팹
     [SerializeField]
-    private ThrowKnife throwKnife;
+    private ThrowThings throwThings;
     // Start is called before the first frame update
     void Awake()
     {
-        throwKnife.ThrowTo(1f);
+        throwThings.ThrowTo(1f);
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
@@ -92,13 +92,13 @@ public class Player : MonoBehaviour
     {
         if (spriteRenderer.flipX == true)
         {
-            throwKnife.ThrowTo(-1f); // 나이프 이동 방향
+            throwThings.ThrowTo(-1f); // 나이프 이동 방향
             throwPos.position = new Vector3(playerPos.position.x - 0.7f, playerPos.position.y + 0.1f, 0); // 나이프 스폰 포인트 
             pos[0].position = new Vector3(playerPos.position.x - 1.1f, playerPos.position.y, 0); // 히팅 박스
         }
         else
         {
-            throwKnife.ThrowTo(1f);
+            throwThings.ThrowTo(1f);
             throwPos.position = new Vector3(playerPos.position.x + 0.7f, playerPos.position.y + 0.1f, 0);
             pos[0].position = new Vector3(playerPos.position.x + 1.1f, playerPos.position.y, 0);
         }
@@ -167,7 +167,7 @@ public class Player : MonoBehaviour
         }
         isThrowing = true; // 던지고 있는 중
         GameObject clone = Instantiate(knifePrefab, throwPos.position, Quaternion.identity);
-        clone.GetComponent<ThrowKnife>().Throw();
+        clone.GetComponent<ThrowThings>().Throw(20f);
         yield return new WaitForSeconds(.5f);
         isThrowing = false; // 던지는 모션 끝
 
