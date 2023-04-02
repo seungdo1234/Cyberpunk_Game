@@ -8,10 +8,12 @@ public class Player : MonoBehaviour
     private bool isAttacking = false; // 공격 딜레이
     private bool isThrowing = false; // 투척 딜레이
     private bool throwSkill = false; // 스킬 On
+    private bool isDamaged = false; // 피격 시
     private bool teleportAttack = false; // 텔레포트 공격 모션 중
+    private bool isJumpAttacking = false; // 점프 공격 중
     public Transform[] pos;  // 히팅 박스 위치
     public Vector2[] boxSize; // 박스 크기
-  
+
     private Rigidbody2D rigid;
     private CapsuleCollider2D capsuleColider;
     private SpriteRenderer spriteRenderer;
@@ -44,12 +46,15 @@ public class Player : MonoBehaviour
         {
             // 점프
             if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
-            {
-                Debug.Log("점프");
+            { 
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 anim.SetBool("isJumpping", true);
             }
-
+            if (anim.GetBool("isJumpping") && Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                anim.SetTrigger("IsJumpAttack");
+                StartCoroutine(JumpAttack());
+            }
 
             // Stop Speed
             if (Input.GetButtonUp("Horizontal"))
@@ -60,27 +65,32 @@ public class Player : MonoBehaviour
             // 방향 전환
             if (Input.GetButton("Horizontal"))
             {
-                spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-                // Flip시 좌우로 히팅 박스, 나이프 생성 위치 변경 
-                X_Flip();
+                if (isJumpAttacking == false) // 점프공격 중일때는 플립 X 
+                {
+                  
+                    spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+                    X_Flip();     // Flip시 좌우로 히팅 박스, 나이프 생성 위치 변경 
+                }
             }
 
-            // animation
             if (Mathf.Abs(rigid.velocity.x) < 0.4)
             {
                 anim.SetBool("isRunning", false);
             }
             else
             {
+            //    Debug.Log(rigid.velocity);
                 anim.SetBool("isRunning", true);
             }
+            // animation
+
 
             if (!anim.GetBool("isJumpping") && isThrowing == false && Input.GetKeyDown(KeyCode.LeftControl)) // Attack
             {
                 anim.SetTrigger("ComboAtk1");
-                StartCoroutine(ComboAtk2(.9f)); // 콤보어택 시작
+                StartCoroutine(ComboAtk2(.725f)); // 콤보어택 시작
             }
-            else if ( throwSkill == false && Input.GetKeyDown(KeyCode.Z)) // ThorwKnife
+            else if (throwSkill == false && Input.GetKeyDown(KeyCode.Z)) // ThorwKnife
             {
                 StartCoroutine(IsThrowing()); // 던지기
                 StartCoroutine(ThrowKnifeCoolTime());  // 쿨타임
@@ -111,35 +121,33 @@ public class Player : MonoBehaviour
         {
             yield return null; // 리턴을 반복문 아래에 두면 첫 프레임에 공격 키가 인식이 됌 
                                //  Debug.Log(atkDelay);
-            if (combo ==1 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk1"))
+            if (combo == 1 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk1"))
             {
                 if (Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 1
                 {
                     anim.SetTrigger("ComboAtk2");
-   //                 atkDelay = 0.5f;
+                    //                 atkDelay = 0.5f;
                     combo++;
                 }
             }
-            else if(combo == 2 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk2"))
+            else if (combo == 2 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk2"))
             {
                 if (Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 2
                 {
                     anim.SetTrigger("ComboAtk3");
-   //                 atkDelay = 1.084f;
+                    //                 atkDelay = 1.084f;
                     combo = 0;
                 }
             }
-            if (animPlay == 1 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk2"))
+            if (animPlay == 1 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk2")) // 애니메이션이 끝날 때 AttackDelay 적용을 위함
             {
                 animPlay++;
-                atkDelay = 0.4f;
-                Debug.Log(atkDelay);
+                atkDelay = 0.35f;
             }
             else if (animPlay == 2 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk3"))
             {
                 animPlay = 0;
-                atkDelay = .9f;
-                Debug.Log(atkDelay);
+                atkDelay = .725f;
             }
             atkDelay -= Time.deltaTime;
         }
@@ -150,7 +158,7 @@ public class Player : MonoBehaviour
         float ThrowCoolTime = 5f;
         while (ThrowCoolTime >= 0) // 쿨타임
         {
-         //   Debug.Log(ThrowCoolTime);
+            //   Debug.Log(ThrowCoolTime);
             ThrowCoolTime -= Time.deltaTime;
             yield return null;
         }
@@ -177,7 +185,7 @@ public class Player : MonoBehaviour
         this.enemy = enemy;
         //  anim.SetTrigger("TeleportAttack");
         Debug.Log("나이프 맞춤");
-         StartCoroutine(TeleportAttack(this.enemy, enemyMoveDirection));
+        StartCoroutine(TeleportAttack(this.enemy, enemyMoveDirection));
         this.enemy = null;
     }
     private IEnumerator TeleportAttack(Enemy enemy, int enemyMoveDirection)
@@ -232,6 +240,59 @@ public class Player : MonoBehaviour
         rigid.gravityScale = 1f;
 
     }
+    
+    private IEnumerator JumpAttack()
+    {
+        isJumpAttacking = true;
+        float atkDelay = 1.159f;
+        while (atkDelay >= 0)
+        {
+            yield return null;
+            if (!anim.GetBool("isJumpping"))
+            {
+                break;
+            }
+            atkDelay -= Time.deltaTime;
+
+        }
+        isJumpAttacking = false;
+    }
+    
+    
+    public void OnDamaged(Vector2 targetPosition)
+    {
+        // 레이어를 PlayerDamaged로 바꿈
+        gameObject.layer = 11;
+        gameObject.tag = "PlayerDamage";
+        // 피격시 플레이어 캐릭터의 투명도를 올림 Color (R,G,B,A)
+        spriteRenderer.color = new Color(1, 1, 1, 0.7f);
+
+        // 피격시 뒤로 밀림
+        // 플레이어의 x축 - 목표물의 x 축 했을 때 양수면 오른쪽 음수면 왼쪽으로 밀림
+        rigid.velocity = new Vector2(0, 0);
+        int dirc = transform.position.x - targetPosition.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse);
+
+
+        StartCoroutine(DamagedDelay());
+        // 2초 뒤 무적 해제
+        Invoke("OffDamaged", 1);
+    }
+    private IEnumerator DamagedDelay()
+    {
+        isDamaged = true;
+        anim.SetBool("isDamaged", true);
+        yield return new WaitForSeconds(.5f);
+        isDamaged = false;
+        anim.SetBool("isDamaged", false);
+    }
+    void OffDamaged()
+    {
+        // 레이어를 Player로 바꿈
+        gameObject.layer = 3;
+        gameObject.tag = "Player";
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
     private void EnemyAtk(int damage) // 애니메이션 트리거 활용
     {
         Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos[0].position, boxSize[0], 0);
@@ -251,7 +312,7 @@ public class Player : MonoBehaviour
     // 연속적 입력은 FixedUpdate
     void FixedUpdate()
     {
-        if (isAttacking == false && isThrowing == false && teleportAttack == false)
+        if (isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false)
         {
             // 이동
             float h = Input.GetAxisRaw("Horizontal");
@@ -288,11 +349,10 @@ public class Player : MonoBehaviour
                     if (rayHit.distance < 1.0f)
                     {
                         anim.SetBool("isJumpping", false);
-                        Debug.Log("땅에 닿음");
                     }
                 }
             }
-            
+
         }
     }
 }
