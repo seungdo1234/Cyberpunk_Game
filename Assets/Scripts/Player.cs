@@ -67,7 +67,6 @@ public class Player : MonoBehaviour
             {
                 if (isJumpAttacking == false) // 점프공격 중일때는 플립 X 
                 {
-                  
                     spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
                     X_Flip();     // Flip시 좌우로 히팅 박스, 나이프 생성 위치 변경 
                 }
@@ -98,7 +97,7 @@ public class Player : MonoBehaviour
         }
         //Debug.Log(ThrowSkill);
     }
-    private void X_Flip()
+    private void X_Flip() // 히팅 박스, ThrowPoint 플립
     {
         if (spriteRenderer.flipX == true)
         {
@@ -115,12 +114,33 @@ public class Player : MonoBehaviour
     }
     private IEnumerator ComboAtk2(float atkDelay) // 콤보어택
     {
-        int combo = 1, animPlay = 1;
+        // combo : 현재 진행중인 콤보
+        // animPlay : 현재 진행중인 애니메이션
+        // attackMove : 공격 중 움직임
+        int combo = 1, animPlay = 1, attackMove = 0; // 딱 한번만 누르기 위한 변수들
         isAttacking = true;
         while (atkDelay >= 0) // 공격 딜레이 안에 공격키를 누를 시 콤보 어택 발동
         {
+            if (attackMove == 0 && animPlay > 1) // 공격 중 방향키 누를 시 이동
+            {
+                if (!spriteRenderer.flipX)
+                {
+                    if (Input.GetAxisRaw("Horizontal") > 0)
+                    {
+                        attackMove = 1;
+                        rigid.AddForce(new Vector2(1, 0) * 2.5f, ForceMode2D.Impulse);
+                    }
+                }
+                else
+                {
+                    if (Input.GetAxisRaw("Horizontal") < 0)
+                    {
+                        attackMove = 1;
+                        rigid.AddForce(new Vector2(-1, 0) * 2.5f, ForceMode2D.Impulse);
+                    }
+                }
+            }
             yield return null; // 리턴을 반복문 아래에 두면 첫 프레임에 공격 키가 인식이 됌 
-                               //  Debug.Log(atkDelay);
             if (combo == 1 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk1"))
             {
                 if (Input.GetKeyDown(KeyCode.LeftControl)) // 콤보 1
@@ -142,11 +162,13 @@ public class Player : MonoBehaviour
             if (animPlay == 1 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk2")) // 애니메이션이 끝날 때 AttackDelay 적용을 위함
             {
                 animPlay++;
+                attackMove = 0;
                 atkDelay = 0.35f;
             }
             else if (animPlay == 2 && anim.GetCurrentAnimatorStateInfo(0).IsName("Combo_Atk3"))
             {
-                animPlay = 0;
+                animPlay++;
+                attackMove = 0;
                 atkDelay = .725f;
             }
             atkDelay -= Time.deltaTime;
@@ -241,14 +263,14 @@ public class Player : MonoBehaviour
 
     }
     
-    private IEnumerator JumpAttack()
+    private IEnumerator JumpAttack() // 점프 공격 코루틴
     {
         isJumpAttacking = true;
         float atkDelay = 1.159f;
         while (atkDelay >= 0)
         {
             yield return null;
-            if (!anim.GetBool("isJumpping"))
+            if (!anim.GetBool("isJumpping")) // 착지하면 해당 코루틴도 종료
             {
                 break;
             }

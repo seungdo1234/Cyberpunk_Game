@@ -1539,6 +1539,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6706399476768954189, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: m_Size.x
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 6706399476768954190, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: Throwknife
       value: 
