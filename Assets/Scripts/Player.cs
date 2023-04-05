@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
 {
     public float maxSpeed;
     public float jumpPower;
+    private bool isDoubleJumpping = false; // 더블점프 여부
     private bool isAttacking = false; // 공격 딜레이
     private bool isThrowing = false; // 투척 딜레이
     private bool throwSkill = false; // 스킬 On
@@ -49,11 +50,15 @@ public class Player : MonoBehaviour
             { 
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 anim.SetBool("isJumpping", true);
+                StartCoroutine(DoubleJump());
             }
-            if (anim.GetBool("isJumpping") && Input.GetKeyDown(KeyCode.LeftControl))
+            if (anim.GetBool("isJumpping")) // 점프 중일 떄
             {
-                anim.SetTrigger("IsJumpAttack");
-                StartCoroutine(JumpAttack());
+                if (isJumpAttacking == false && Input.GetKeyDown(KeyCode.LeftControl)) // 점프공겨
+                {
+                    anim.SetTrigger("IsJumpAttack");
+                    StartCoroutine(JumpAttack());
+                }
             }
 
             // Stop Speed
@@ -111,6 +116,27 @@ public class Player : MonoBehaviour
             throwPos.position = new Vector3(playerPos.position.x + 0.7f, playerPos.position.y + 0.1f, 0);
             pos[0].position = new Vector3(playerPos.position.x + 1.1f, playerPos.position.y, 0);
         }
+    }
+    private IEnumerator DoubleJump()
+    {
+        while (true)
+        {
+           // Debug.Log(anim.GetBool("isJumpping"));
+            if (!anim.GetBool("isJumpping"))
+            {
+                break;
+            }
+            yield return null;
+            if (isJumpAttacking == false &&isDoubleJumpping == false && Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("더블점프");
+                rigid.velocity = new Vector2(rigid.velocity.x, 0);
+                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                anim.SetBool("IsJumpDown", true);
+                isDoubleJumpping = true;
+            }
+        }
+        isDoubleJumpping = false;
     }
     private IEnumerator ComboAtk2(float atkDelay) // 콤보어택
     {
@@ -266,8 +292,8 @@ public class Player : MonoBehaviour
     private IEnumerator JumpAttack() // 점프 공격 코루틴
     {
         isJumpAttacking = true;
-        float atkDelay = 1.159f;
-        while (atkDelay >= 0)
+        float atkDelay = 1.111f;
+        while (atkDelay >= 0)   
         {
             yield return null;
             if (!anim.GetBool("isJumpping")) // 착지하면 해당 코루틴도 종료
@@ -371,6 +397,7 @@ public class Player : MonoBehaviour
                     if (rayHit.distance < 1.0f)
                     {
                         anim.SetBool("isJumpping", false);
+                        anim.SetBool("IsJumpDown", false);
                     }
                 }
             }

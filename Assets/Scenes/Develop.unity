@@ -532,7 +532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!95 &426480735
 Animator:
   serializedVersion: 4
@@ -618,8 +618,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 807573113}
+  - {fileID: 1604801390}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &426480738
 BoxCollider2D:
@@ -1303,13 +1304,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1604801387}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.58, y: 0.92, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 426480737}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1661962258
 GameObject:
@@ -1542,6 +1543,10 @@ PrefabInstance:
     - target: {fileID: 6706399476768954189, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: m_Size.x
       value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6706399476768954190, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
+      propertyPath: jumpPower
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6706399476768954190, guid: c875fa190835cc544aa39fd95c05540d, type: 3}
       propertyPath: Throwknife
