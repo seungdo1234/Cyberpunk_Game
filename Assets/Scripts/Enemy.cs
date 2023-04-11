@@ -1,16 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public int enemyHP;
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D capsuleColider;
-    [SerializeField]
-    Player player;
+    private Player player;
     public int nextMove;
     void Awake()
     {
@@ -68,13 +64,9 @@ public class Enemy : MonoBehaviour
         CancelInvoke();
         Invoke("Think", 3.0f);
     }
-    public void OnDamaged(int damage, int attackType)
+    public void KnifeHit()
     {
-        if(attackType == 2) // Enemy가 나이프에 맞았을 경우
-        {
-            player.SpecialAttack(this, nextMove);
-        }
-        enemyHP -= damage;
+        player.SpecialAttack(this, nextMove);
     }
 
 }

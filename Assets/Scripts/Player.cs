@@ -224,6 +224,7 @@ public class Player : MonoBehaviour
         isThrowing = true; // 던지고 있는 중
         GameObject clone = Instantiate(knifePrefab, throwPos.position, Quaternion.identity);
         clone.GetComponent<ThrowThings>().Throw(20f);
+        clone.GetComponent<Player>();
         yield return new WaitForSeconds(.5f);
         isThrowing = false; // 던지는 모션 끝
 
@@ -317,9 +318,9 @@ public class Player : MonoBehaviour
 
         // 피격시 뒤로 밀림
         // 플레이어의 x축 - 목표물의 x 축 했을 때 양수면 오른쪽 음수면 왼쪽으로 밀림
-        rigid.velocity = new Vector2(0, 0);
+        rigid.velocity = new Vector2(0, rigid.velocity.y);
         int dirc = transform.position.x - targetPosition.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse);
+        rigid.AddForce(new Vector2(dirc, 0) * 5, ForceMode2D.Impulse);
 
 
         StartCoroutine(DamagedDelay());
@@ -348,7 +349,7 @@ public class Player : MonoBehaviour
         {
             if (collider.tag == "Enemy")
             {
-                collider.GetComponent<Enemy>().OnDamaged(damage, 1);
+                collider.GetComponent<EnemyHP>().TakeDamage(damage);
             }
         }
     }

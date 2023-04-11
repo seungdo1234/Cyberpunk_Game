@@ -20,7 +20,8 @@ public class ThrowThings : MonoBehaviour
     {
         if (throwingType == 1 && collision.tag == "Enemy") // ³ªÀÌÇÁ
         {
-            collision.GetComponent<Enemy>().OnDamaged(1, 2);
+         //   collision.GetComponent<Enemy>().KnifeHit();
+            collision.GetComponent<EnemyHP>().TakeDamage(1);
             StopCoroutine(Throwing(throwDirection));
             Destroy(gameObject);
         }
