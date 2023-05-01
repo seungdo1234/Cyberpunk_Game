@@ -1,17 +1,19 @@
 using System.Collections;
 using UnityEngine;
-
 public class Player : MonoBehaviour
 {
     public float maxSpeed;
     public float jumpPower;
-    private bool isDoubleJumpping = false; // 더블점프 여부
+    public float clingingSpeed;
+    private int throwDirc = 1; // 나이프 던지는 방향
     private bool isAttacking = false; // 공격 딜레이
     private bool isThrowing = false; // 투척 딜레이
     private bool throwSkill = false; // 스킬 On
     private bool isDamaged = false; // 피격 시
+    private bool isClinging = false; // 매달려 있을 때
     private bool teleportAttack = false; // 텔레포트 공격 모션 중
     private bool isJumpAttacking = false; // 점프 공격 중
+    private int jumpNum = 0; // 점프 횟수 (최대 2 => 더블점프)
     public Transform[] pos;  // 히팅 박스 위치
     public Vector2[] boxSize; // 박스 크기
 
@@ -32,7 +34,6 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        throwThings.ThrowTo(1f);
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
@@ -43,13 +44,14 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isAttacking == false && isThrowing == false && teleportAttack == false)
+        if (isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false)
         {
             // 점프
             if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
-            { 
+            {
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 anim.SetBool("isJumpping", true);
+                jumpNum++;
                 StartCoroutine(DoubleJump());
             }
             if (anim.GetBool("isJumpping")) // 점프 중일 떄
@@ -83,7 +85,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-            //    Debug.Log(rigid.velocity);
+                //    Debug.Log(rigid.velocity);
                 anim.SetBool("isRunning", true);
             }
             // animation
@@ -99,6 +101,7 @@ public class Player : MonoBehaviour
                 StartCoroutine(IsThrowing()); // 던지기
                 StartCoroutine(ThrowKnifeCoolTime());  // 쿨타임
             }
+
         }
         //Debug.Log(ThrowSkill);
     }
@@ -106,14 +109,14 @@ public class Player : MonoBehaviour
     {
         if (spriteRenderer.flipX == true)
         {
-            throwThings.ThrowTo(-1f); // 나이프 이동 방향
-            throwPos.position = new Vector3(playerPos.position.x - 0.7f, playerPos.position.y + 0.1f, 0); // 나이프 스폰 포인트 
+            throwDirc = -1; // 나이프 이동 방향
+            throwPos.position = new Vector3(playerPos.position.x - 1f, playerPos.position.y + 0.1f, 0); // 나이프 스폰 포인트 
             pos[0].position = new Vector3(playerPos.position.x - 1.1f, playerPos.position.y, 0); // 히팅 박스
         }
         else
         {
-            throwThings.ThrowTo(1f);
-            throwPos.position = new Vector3(playerPos.position.x + 0.7f, playerPos.position.y + 0.1f, 0);
+            throwDirc = 1;
+            throwPos.position = new Vector3(playerPos.position.x + 1f, playerPos.position.y + 0.1f, 0);
             pos[0].position = new Vector3(playerPos.position.x + 1.1f, playerPos.position.y, 0);
         }
     }
@@ -121,22 +124,22 @@ public class Player : MonoBehaviour
     {
         while (true)
         {
-           // Debug.Log(anim.GetBool("isJumpping"));
+            // Debug.Log(anim.GetBool("isJumpping"));
             if (!anim.GetBool("isJumpping"))
             {
                 break;
             }
             yield return null;
-            if (isJumpAttacking == false &&isDoubleJumpping == false && Input.GetKeyDown(KeyCode.Space))
+            if (isJumpAttacking == false && jumpNum == 1 && Input.GetKeyDown(KeyCode.Space)) // 더블점프
             {
-                Debug.Log("더블점프");
+
                 rigid.velocity = new Vector2(rigid.velocity.x, 0);
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 anim.SetBool("IsJumpDown", true);
-                isDoubleJumpping = true;
+                jumpNum++;
             }
         }
-        isDoubleJumpping = false;
+        jumpNum = 0; // 점프 횟수 초기화
     }
     private IEnumerator ComboAtk2(float atkDelay) // 콤보어택
     {
@@ -223,7 +226,7 @@ public class Player : MonoBehaviour
         }
         isThrowing = true; // 던지고 있는 중
         GameObject clone = Instantiate(knifePrefab, throwPos.position, Quaternion.identity);
-        clone.GetComponent<ThrowThings>().Throw(20f);
+        clone.GetComponent<ThrowThings>().Throw(20f, throwDirc);
         clone.GetComponent<Player>();
         yield return new WaitForSeconds(.5f);
         isThrowing = false; // 던지는 모션 끝
@@ -289,12 +292,53 @@ public class Player : MonoBehaviour
         rigid.gravityScale = 1f;
 
     }
-    
+    private void Clinging(float h)
+    {
+        Debug.DrawRay(rigid.position, Vector3.right * h, new Color(0, 1, 0));
+        // 빔에 맞은 오브젝트의 정보
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.right * h, 1, LayerMask.GetMask("Wall"));
+        // 관통 x
+        if (rayHit.collider != null)
+        {
+            // distance : Ray에 닿았을 때의 거리
+            if (rayHit.distance < .5f)
+            {
+                anim.SetBool("isClinging", true);
+                jumpNum = 1;
+              //  StartCoroutine(IsClinging(h));
+            }
+        }
+        else
+        {
+            anim.SetBool("isClinging", false);
+        }
+
+    }
+    private IEnumerator IsClinging(float h)
+    {
+        isClinging = true;
+        while (true)
+        {
+            if (!anim.GetBool("isClinging"))
+            {
+                break;
+            }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+
+                rigid.AddForce(new Vector2(-h,2) * 5, ForceMode2D.Impulse);
+                anim.SetBool("isClinging", false);
+                break;
+            }
+            yield return null;
+        }
+        isClinging = false;
+    }
     private IEnumerator JumpAttack() // 점프 공격 코루틴
     {
         isJumpAttacking = true;
         float atkDelay = 1.111f;
-        while (atkDelay >= 0)   
+        while (atkDelay >= 0)
         {
             yield return null;
             if (!anim.GetBool("isJumpping")) // 착지하면 해당 코루틴도 종료
@@ -306,8 +350,6 @@ public class Player : MonoBehaviour
         }
         isJumpAttacking = false;
     }
-    
-    
     public void OnDamaged(Vector2 targetPosition)
     {
         // 레이어를 PlayerDamaged로 바꿈
@@ -361,12 +403,25 @@ public class Player : MonoBehaviour
     // 연속적 입력은 FixedUpdate
     void FixedUpdate()
     {
+
         if (isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false)
         {
-            // 이동
             float h = Input.GetAxisRaw("Horizontal");
             rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
+            if (anim.GetBool("isJumpping") && h != 0) // 점프 중일때 벽타기 인식
+            {
+                Clinging(h);
+            }
+            else // 벽안타고 내려올때
+            {
+                anim.SetBool("isClinging", false);
+            }
+
+            if (anim.GetBool("isClinging"))
+            {
+                rigid.velocity = new Vector2(rigid.velocity.x, rigid.velocity.y * clingingSpeed);
+            }
             if (rigid.velocity.x > maxSpeed) // Right MaxSpeed
             {
                 background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
@@ -395,10 +450,13 @@ public class Player : MonoBehaviour
                 if (rayHit.collider != null)
                 {
                     // distance : Ray에 닿았을 때의 거리
-                    if (rayHit.distance < 1.0f)
+                    if (rayHit.distance < 1.0f) // 땅에 착지 했을 때
                     {
+                        jumpNum = 0; // 점프 횟수 초기화 
+                        // 점프 애니메이션 초기화
                         anim.SetBool("isJumpping", false);
                         anim.SetBool("IsJumpDown", false);
+                        anim.SetBool("isClinging", false);
                     }
                 }
             }

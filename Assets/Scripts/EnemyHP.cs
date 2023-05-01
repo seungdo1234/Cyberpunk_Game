@@ -10,7 +10,7 @@ public class EnemyHP : MonoBehaviour
     private bool isDie = false; // 적이 사망 s isDie를 true로 설정
     private Enemy enemy;
     private SpriteRenderer spriteRenderer;
-
+    private Animator anim;
     // 외부 클래스에서 확인 할 수 있게 프로퍼티 생성 (람다식)
     public float MaxHp => maxHP;
     public float CuurentHP => currentHP;
@@ -20,6 +20,7 @@ public class EnemyHP : MonoBehaviour
         currentHP = maxHP; // 현재 체력을 최대 체력과 길게 설정
         //enemy = GetComponent<Enemy>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
 
     }
     public void TakeDamage(int damage)
@@ -41,9 +42,9 @@ public class EnemyHP : MonoBehaviour
         if (currentHP <= 0)
         {
              isDie = true;
+            anim.SetTrigger("Enemy_Exp");
             // 적 캐릭터 사망
             //enemy.OnDie(EnemyDestroyType.kill);
-            Destroy(gameObject);
         }
     }
     // 적이 공격 당했음을 가시화하는 코루틴
@@ -63,5 +64,9 @@ public class EnemyHP : MonoBehaviour
         // 적의 투명도를 100%로 설정
         color.a = 1.0f;
         spriteRenderer.color = color;
+    }
+    public void EnemyDie()
+    {
+        Destroy(gameObject);
     }
 }

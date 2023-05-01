@@ -163,11 +163,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 5
   jumpPower: 15
-  pos: {fileID: 6706399476198685395}
-  boxSize: {x: 1.5, y: 1.3}
+  pos:
+  - {fileID: 0}
+  boxSize:
+  - {x: 0, y: 3.91e-43}
+  - {x: 0, y: 0}
   background_Scroller: {fileID: 6706399475717572347}
   throwPos: {fileID: 6706399476430251872}
   knifePrefab: {fileID: 7744404704031754915, guid: 7b049847463160248b67196b38b9c777, type: 3}
+  throwThings: {fileID: 0}
 --- !u!1 &6706399475717572340
 GameObject:
   m_ObjectHideFlags: 0

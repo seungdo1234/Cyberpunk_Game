@@ -5,12 +5,14 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
-    private GameObject enemyPrefab; // 적 프리팹
+    private GameObject[] enemyPrefab; // 적 프리팹
     [SerializeField]
     private GameObject enemyHPSliderPrefab; // 적 체력을 나타내는 Slider UI 프리팹
     [SerializeField]
     private Transform canvasTransform; // UI를 표현하는 Canvas 오브젝트의 Transform
-
+    [SerializeField]
+    private Transform[] enemySpawnPoints; // 적 스폰포인트 리스트
+    private int enemyType;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,11 +21,22 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpanwnEnemy()
     {
-        GameObject clone = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
-        SpawnHP_Slider(clone);
+        for(int i =0; i<enemyPrefab.Length; i++)
+        {
+            if (enemyPrefab[i].name == "Enemy")
+            {
+                enemyType = 1;
+            }
+            else if (enemyPrefab[i].name == "turret")
+            {
+                enemyType = 2;
+            }
+            GameObject clone = Instantiate(enemyPrefab[i], enemySpawnPoints[i].position, Quaternion.identity);
+            SpawnHP_Slider(clone, enemyType);
+        }
     }
 
-    private void SpawnHP_Slider(GameObject enemy)
+    private void SpawnHP_Slider(GameObject enemy, int enemyType)
     {
         // 적 체력을 나타내는 Slider UI 생성
         GameObject sliderClone = Instantiate(enemyHPSliderPrefab);
@@ -35,7 +48,7 @@ public class EnemySpawner : MonoBehaviour
         sliderClone.transform.localScale = Vector3.one;
 
         // Slider UI가 쫒아다닐 대상을 본인으로 설정
-        sliderClone.GetComponent<HP_SliderPoisition>().Setup(enemy.transform);
+        sliderClone.GetComponent<HP_SliderPoisition>().Setup(enemy.transform, enemyType);
         // Slider UI에 자신의 체력 정보를 표시하도록 설정
         sliderClone.GetComponent<EnemyHPViewer>().Setup(enemy.GetComponent<EnemyHP>());
     }

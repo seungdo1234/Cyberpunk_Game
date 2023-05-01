@@ -5,15 +5,23 @@ using UnityEngine;
 public class HP_SliderPoisition : MonoBehaviour
 {
     [SerializeField] // 슬라이더와 적 오브젝트 거리를 나타내는 변수
-    private Vector3 distance = Vector3.down * 50.0f;
+    private Vector3 distance;
     // target의 transform 정보를 나타냄
     private Transform targetTransform;
     // UI의 위치정보를 제어
     private RectTransform rectTransform;
 
     // EnemySpawner에서 적과 슬라이더를 생성할 때 호출하며 target 매개변수에 쫒아다닐 적의 Transform 정보를 제공
-    public void Setup(Transform target)
+    public void Setup(Transform target, int enemyType)
     {
+        if (enemyType == 1)
+        {
+            distance = Vector3.down * 50.0f;
+        }
+        else if(enemyType == 2)
+        {
+            distance = Vector3.down * 30.0f;
+        }
         // Slider UI가 쫒아다닐 target 설정
         targetTransform = target;
         // RectTransform 컴포넌트 정보 얻어오기

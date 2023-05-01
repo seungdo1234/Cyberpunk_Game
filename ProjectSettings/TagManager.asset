@@ -7,6 +7,8 @@ TagManager:
   - Platform
   - Enemy
   - PlayerDamage
+  - Wall
+  - Shot
   layers:
   - Default
   - TransparentFX
@@ -15,9 +17,9 @@ TagManager:
   - Water
   - UI
   - Enemy
-  - 
+  - Shot
   - Platform
-  - 
+  - Wall
   - 
   - PlayerDamaged
   - 

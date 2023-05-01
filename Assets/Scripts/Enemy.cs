@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     Animator anim;
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D capsuleColider;
-    private Player player;
+    public Player player;
     public int nextMove;
     void Awake()
     {
@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
     {
         // Move
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
-
+            
         // Platform Check
         Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.2f, rigid.position.y);
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
