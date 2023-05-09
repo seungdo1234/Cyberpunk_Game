@@ -8,10 +8,15 @@ public class EnemyHP : MonoBehaviour
     private float maxHP; // 최대 체력
     [SerializeField]
     private float currentHP; // 현재 체력
+    [SerializeField]
+    private int enemyType; // 0. 터렛, 1. 솔져
+    [SerializeField]
+    private GameObject knifeHitMarkPrefab; // 나이프 맞았을 때 나타는 표식 5초뒤 사라짐
     private bool isDie = false; // 적이 사망 s isDie를 true로 설정
     private Enemy enemy;
     private SpriteRenderer spriteRenderer;
     private Animator anim;
+    private GameObject markClone;
     // 외부 클래스에서 확인 할 수 있게 프로퍼티 생성 (람다식)
     public float MaxHp => maxHP;
     public float CuurentHP => currentHP;
@@ -19,13 +24,44 @@ public class EnemyHP : MonoBehaviour
     private void Awake()
     {
         currentHP = maxHP; // 현재 체력을 최대 체력과 길게 설정
-        //enemy = GetComponent<Enemy>();
+        enemy = GetComponent<Enemy>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
 
     }
-    public void TakeDamage(int damage)
+    private IEnumerator MarkDuration(GameObject markClone)
     {
+        yield return new WaitForSeconds(5f);
+        Destroy(markClone);
+
+    }
+    private void SpawnMark()
+    {
+        markClone = Instantiate(knifeHitMarkPrefab);
+
+        markClone.GetComponent<KnifeHitMark>().Setup(transform);
+
+        StartCoroutine(MarkDuration(markClone));
+
+    }
+    public void TakeDamage(int damage, int hitType)
+    {
+        if (hitType == 2)
+        {
+            SpawnMark();
+            if (enemyType == 0)
+            {
+                GameObject.FindWithTag("Player").GetComponent<Player>().SpecialAttack(this, 0);
+            }
+            else
+            {
+             //   GameObject.FindWithTag("Player").GetComponent<Player>().SpecialAttack(enemy, 0);
+            }
+        }
+        if (damage == 5)
+        {
+            Destroy(markClone);
+        }
         // Tip. 적의 체력이 damage 만큼 감소해서 죽을 상황일 때 여러 타워의 공격을 동시에 받으면
         // enemy.OnDie() 함수가 여러 번 실행될 수 있다,
 

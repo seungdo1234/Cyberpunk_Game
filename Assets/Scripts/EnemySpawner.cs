@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField]
+    private int[] enemyType; // 적 타입
+    [SerializeField]
     private GameObject[] enemyPrefab; // 적 프리팹
     [SerializeField]
     private GameObject enemyHPSliderPrefab; // 적 체력을 나타내는 Slider UI 프리팹
@@ -12,27 +14,18 @@ public class EnemySpawner : MonoBehaviour
     private Transform canvasTransform; // UI를 표현하는 Canvas 오브젝트의 Transform
     [SerializeField]
     private Transform[] enemySpawnPoints; // 적 스폰포인트 리스트
-    private int enemyType;
     // Start is called before the first frame update
     void Start()
     {
-     //   SpanwnEnemy();
+        SpanwnEnemy();
     }
 
     public void SpanwnEnemy()
     {
-        for(int i =0; i<enemyPrefab.Length; i++)
+        for(int i = 0; i < enemyType.Length; i++)
         {
-            if (enemyPrefab[i].name == "Enemy")
-            {
-                enemyType = 1;
-            }
-            else if (enemyPrefab[i].name == "turret")
-            {
-                enemyType = 2;
-            }
-            GameObject clone = Instantiate(enemyPrefab[i], enemySpawnPoints[i].position, Quaternion.identity);
-            SpawnHP_Slider(clone, enemyType);
+            GameObject clone = Instantiate(enemyPrefab[enemyType[i]], enemySpawnPoints[i].position, Quaternion.identity);
+            SpawnHP_Slider(clone, enemyType[i]);
         }
     }
 

@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        PlayCutScene(0, 5f);
+        PlayCutScene(0, 7f);
     }
 
     public void PlayCutScene(int sceneNumber, float delay)

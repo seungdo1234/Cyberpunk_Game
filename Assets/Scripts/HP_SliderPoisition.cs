@@ -18,7 +18,7 @@ public class HP_SliderPoisition : MonoBehaviour
         {
             distance = Vector3.down * 50.0f;
         }
-        else if(enemyType == 2)
+        else if(enemyType == 0)
         {
             distance = Vector3.down * 30.0f;
         }

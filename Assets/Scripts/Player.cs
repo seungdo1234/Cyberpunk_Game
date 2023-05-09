@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private bool teleportAttack = false; // 텔레포트 공격 모션 중
     private bool isJumpAttacking = false; // 점프 공격 중
     public bool isCutScenePlaying; // 컷신 플레이 중 일때 조작이 안되게 함
-    
+
     private int jumpNum = 0; // 점프 횟수 (최대 2 => 더블점프)
     public Transform[] pos;  // 히팅 박스 위치
     public Vector2[] boxSize; // 박스 크기
@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     private CapsuleCollider2D capsuleColider;
     private SpriteRenderer spriteRenderer;
     private Animator anim;
-    private Enemy enemy;
+    private EnemyHP enemy; // enemy 정보
     private Transform playerPos;
     [SerializeField]
     private Background_Scroller background_Scroller;
@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying== false)
+        if (isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying == false)
         {
             // 점프
             if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
@@ -208,7 +208,7 @@ public class Player : MonoBehaviour
     }
     private IEnumerator ThrowKnifeCoolTime() // Throw Skill 쿨타임
     {
-        float ThrowCoolTime = 5f;
+        float ThrowCoolTime = 8f;
         while (ThrowCoolTime >= 0) // 쿨타임
         {
             //   Debug.Log(ThrowCoolTime);
@@ -234,16 +234,53 @@ public class Player : MonoBehaviour
         isThrowing = false; // 던지는 모션 끝
 
     }
-    public void SpecialAttack(Enemy enemy, int enemyMoveDirection) // Enemy가 나이프에 맞았을 때
+    public void SpecialAttack(EnemyHP enemy,int enemyMoveDirection) // Enemy가 나이프에 맞았을 때
     {
+        Debug.Log(enemy.name);
         this.enemy = enemy;
         //  anim.SetTrigger("TeleportAttack");
-        Debug.Log("나이프 맞춤");
-        StartCoroutine(TeleportAttack(this.enemy, enemyMoveDirection));
+        StartCoroutine(TeleportAttack(enemy, enemyMoveDirection));
         this.enemy = null;
     }
-    private IEnumerator TeleportAttack(Enemy enemy, int enemyMoveDirection)
+    private IEnumerator TeleportAttack(EnemyHP enemyPos, int enemyMoveDirection)
     {
+        float atkDelay = 5f;
+        bool keyEvent = false;
+        while(atkDelay >= 0)
+        {
+            if (!keyEvent && !isAttacking&& !isClinging && !isJumpAttacking &&!isThrowing && Input.GetKeyDown(KeyCode.Z))
+            {
+                keyEvent = true;
+                teleportAttack = true;
+                anim.SetTrigger("TeleAtk");
+                yield return new WaitForSeconds(.5f);
+                if (enemyMoveDirection == 0)
+                {
+                    if (spriteRenderer.flipX) // 왼쪽을 바라보고 있다면
+                    {
+                        spriteRenderer.flipX = false;
+                        playerPos.position = new Vector3(enemyPos.transform.position.x - .3f, enemyPos.transform.position.y + 2f, 0);
+                    }
+                    else if (!spriteRenderer.flipX) // 오른쪽을 바라보고 있다면
+                    {
+                        spriteRenderer.flipX = true;
+                        playerPos.position = new Vector3(enemyPos.transform.position.x + .3f, enemyPos.transform.position.y + 2f, 0);
+                    }
+                }
+                X_Flip();
+                rigid.gravityScale = .25f;
+                rigid.velocity = new Vector2(0, 0); // 속도 초기화
+                anim.SetBool("isJumpping", false);
+                yield return new WaitForSeconds(.9f);
+                teleportAttack = false;
+                rigid.gravityScale = 1f;
+                break;
+            }
+            atkDelay -= Time.deltaTime;
+            yield return null;
+        }
+        
+        /*
         Debug.Log("코루틴");
         teleportAttack = true;
         anim.SetBool("KnifeHit", true);
@@ -254,23 +291,23 @@ public class Player : MonoBehaviour
             if (spriteRenderer.flipX) // 왼쪽을 바라보고 있다면
             {
                 spriteRenderer.flipX = false;
-                playerPos.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 2f, 0);
+                playerPos.position = new Vector3(enemyPos.position.x, enemyPos.position.y + 2f, 0);
             }
             else if (!spriteRenderer.flipX) // 오른쪽을 바라보고 있다면
             {
-                playerPos.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 2f, 0);
+                playerPos.position = new Vector3(enemyPos.position.x, enemyPos.position.y + 2f, 0);
             }
         }
         else if (enemyMoveDirection == -1)
         {
             if (spriteRenderer.flipX) // 왼쪽을 바라보고 있다면
             {
-                playerPos.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 2f, 0);
+                playerPos.position = new Vector3(enemyPos.position.x, enemyPos.position.y + 2f, 0);
             }
             else if (!spriteRenderer.flipX) // 오른쪽을 바라보고 있다면
             {
                 spriteRenderer.flipX = true;
-                playerPos.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 2f, 0);
+                playerPos.position = new Vector3(enemyPos.position.x, enemyPos.position.y + 2f, 0);
             }
         }
         else if (enemyMoveDirection == 0)
@@ -278,12 +315,12 @@ public class Player : MonoBehaviour
             if (spriteRenderer.flipX) // 왼쪽을 바라보고 있다면
             {
                 spriteRenderer.flipX = false;
-                playerPos.position = new Vector3(enemy.transform.position.x - .3f, enemy.transform.position.y + 2f, 0);
+                playerPos.position = new Vector3(enemyPos.position.x - .3f, enemyPos.position.y + 2f, 0);
             }
             else if (!spriteRenderer.flipX) // 오른쪽을 바라보고 있다면
             {
                 spriteRenderer.flipX = true;
-                playerPos.position = new Vector3(enemy.transform.position.x + .3f, enemy.transform.position.y + 2f, 0);
+                playerPos.position = new Vector3(enemyPos.position.x + .3f, enemyPos.position.y + 2f, 0);
             }
         }
         X_Flip();
@@ -292,7 +329,7 @@ public class Player : MonoBehaviour
         anim.SetBool("KnifeHit", false);
         teleportAttack = false;
         rigid.gravityScale = 1f;
-
+        */
     }
     private void Clinging(float h)
     {
@@ -307,7 +344,7 @@ public class Player : MonoBehaviour
             {
                 anim.SetBool("isClinging", true);
                 jumpNum = 1;
-              //  StartCoroutine(IsClinging(h));
+                //  StartCoroutine(IsClinging(h));
             }
         }
         else
@@ -328,7 +365,7 @@ public class Player : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
 
-                rigid.AddForce(new Vector2(-h,2) * 5, ForceMode2D.Impulse);
+                rigid.AddForce(new Vector2(-h, 2) * 5, ForceMode2D.Impulse);
                 anim.SetBool("isClinging", false);
                 break;
             }
@@ -388,13 +425,13 @@ public class Player : MonoBehaviour
     }
     private void EnemyAtk(int damage) // 애니메이션 트리거 활용
     {
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos[0].position, boxSize[0], 0); 
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos[0].position, boxSize[0], 0);
         foreach (Collider2D collider in collider2Ds)
         {
             if (collider.tag == "Enemy")
             {
                 Debug.Log("공격");
-                collider.GetComponent<EnemyHP>().TakeDamage(damage);
+                collider.GetComponent<EnemyHP>().TakeDamage(damage, 1);
             }
         }
     }

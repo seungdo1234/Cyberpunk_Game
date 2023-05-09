@@ -24,7 +24,7 @@ public class ThrowThings : MonoBehaviour
         else if (throwingType == 1 && collision.CompareTag("Enemy")) // Player Knife
         {
        //     collision.GetComponent<Enemy>().KnifeHit();
-            collision.GetComponent<EnemyHP>().TakeDamage(1);
+            collision.GetComponent<EnemyHP>().TakeDamage(3,2);
         }
         else if (throwingType == 2 && collision.CompareTag ( "Player")) // Enemy Shot
         {

@@ -48,7 +48,7 @@ public class CutSceneTrigger : MonoBehaviour
                 // rayHit.transform.position = spawnPoint.position;
                 if (!cutScenePlaying)
                 {
-                    StartCoroutine(PlayCutScene(1, 5.5f));
+                    StartCoroutine(PlayCutScene(1, 7.5f));
                 }
 
             }
