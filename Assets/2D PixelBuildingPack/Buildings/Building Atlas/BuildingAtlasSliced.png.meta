@@ -3,7 +3,7 @@ guid: ea0250f1abe41b24d93abef3c0e13970
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -63,6 +63,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -116,211 +117,211 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Building_0
+      name: BuildingAtlasSliced_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 186
         y: 1536
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 326
+        height: 206
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 50e436ea9fa276044979e3f9ef27ef21
-      internalID: -839212766
+      spriteID: c4b4c3a6d97ef9842a58cde0cc76ee6b
+      internalID: -1363712529
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_1
+      name: BuildingAtlasSliced_1
       rect:
         serializedVersion: 2
-        x: 512
+        x: 803
         y: 1536
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 221
+        height: 156
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 76963d9df135f5b4b8c5bd460faa1bbb
-      internalID: -760606685
+      spriteID: 70fbe8607a171e249b10eb994f26fda9
+      internalID: -1572825595
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_2
+      name: BuildingAtlasSliced_2
       rect:
         serializedVersion: 2
-        x: 1024
+        x: 1347
         y: 1536
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 189
+        height: 241
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bdce2bb21eb8e90429d54984172f1c90
-      internalID: 1243524629
+      spriteID: 8b025074ff90e1b4e9009c514cf252f0
+      internalID: -1096374939
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_3
+      name: BuildingAtlasSliced_3
       rect:
         serializedVersion: 2
-        x: 1536
+        x: 1851
         y: 1536
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 184
+        height: 226
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: db29090f3e4715540868ffe7163c63c3
-      internalID: -177601813
+      spriteID: 89b8e6aa1710c614b805a5187108b1a8
+      internalID: -667726287
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_4
+      name: BuildingAtlasSliced_4
       rect:
         serializedVersion: 2
-        x: 0
+        x: 335
         y: 1024
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 177
+        height: 138
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: eaaedba0fb2d61c48ac5b70a6b68415f
-      internalID: 129956463
+      spriteID: 792469400d950594799260aa6629b227
+      internalID: -108560914
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_5
+      name: BuildingAtlasSliced_5
       rect:
         serializedVersion: 2
-        x: 512
+        x: 755
         y: 1024
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 270
+        height: 281
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a7cd1ade8930a7b46b91635ff268ed39
-      internalID: -84162261
+      spriteID: f6e985b75eb72ad4991b4a627b600b87
+      internalID: 548268444
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_6
+      name: BuildingAtlasSliced_6
       rect:
         serializedVersion: 2
-        x: 1024
+        x: 1381
         y: 1024
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 155
+        height: 153
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 48af8de703662f24fa5f04f67ff6f83b
-      internalID: -1133606616
+      spriteID: fa63ad8bcd7a6a54395bf38ba7d15a95
+      internalID: -1521371558
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_7
+      name: BuildingAtlasSliced_7
       rect:
         serializedVersion: 2
-        x: 1536
+        x: 1869
         y: 1024
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 179
+        height: 336
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 78e9ada5db7578f4185abcb1f4d6f2cc
-      internalID: 1873705132
+      spriteID: 11311845efb3d3c4da9f12bdbfaa6c99
+      internalID: -1882393191
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_8
+      name: BuildingAtlasSliced_8
       rect:
         serializedVersion: 2
-        x: 0
+        x: 296
         y: 512
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 216
+        height: 275
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b965fdcc686f7544eb0ce81a1c0fe2a3
-      internalID: -484617282
+      spriteID: 038aca068b032a744b9bb1832cf3125e
+      internalID: -1974871762
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Building_9
+      name: BuildingAtlasSliced_9
       rect:
         serializedVersion: 2
-        x: 512
+        x: 810
         y: 512
-        width: 512
-        height: 512
-      alignment: 8
-      pivot: {x: 1, y: 0}
+        width: 214
+        height: 267
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a05b3572282078b4bb512f70177e0397
-      internalID: 822133646
+      spriteID: cdeac45d9d8954d428ff46ac63088736
+      internalID: -2070037663
       vertices: []
       indices: 
       edges: []
@@ -336,16 +337,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Building_4: 129956463
-      Building_9: 822133646
-      Building_5: -84162261
-      Building_2: 1243524629
-      Building_7: 1873705132
-      Building_6: -1133606616
-      Building_1: -760606685
-      Building_0: -839212766
-      Building_8: -484617282
-      Building_3: -177601813
+      BuildingAtlasSliced_4: -108560914
+      BuildingAtlasSliced_6: -1521371558
+      BuildingAtlasSliced_8: -1974871762
+      BuildingAtlasSliced_0: -1363712529
+      BuildingAtlasSliced_5: 548268444
+      BuildingAtlasSliced_7: -1882393191
+      BuildingAtlasSliced_9: -2070037663
+      BuildingAtlasSliced_2: -1096374939
+      BuildingAtlasSliced_3: -667726287
+      BuildingAtlasSliced_1: -1572825595
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

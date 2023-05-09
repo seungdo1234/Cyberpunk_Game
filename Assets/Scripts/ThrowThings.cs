@@ -37,7 +37,7 @@ public class ThrowThings : MonoBehaviour
     }
     public IEnumerator Throwing(float throwVelocity)
     {
-        float throwing = .7f;
+        float throwing = .75f;
         while (throwing >= 0)
         {
             transform.Translate(new Vector3(1 * throwDirection, 0, 0) * throwVelocity * Time.deltaTime);

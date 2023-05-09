@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     private bool isClinging = false; // 매달려 있을 때
     private bool teleportAttack = false; // 텔레포트 공격 모션 중
     private bool isJumpAttacking = false; // 점프 공격 중
+    public bool isCutScenePlaying; // 컷신 플레이 중 일때 조작이 안되게 함
+    
     private int jumpNum = 0; // 점프 횟수 (최대 2 => 더블점프)
     public Transform[] pos;  // 히팅 박스 위치
     public Vector2[] boxSize; // 박스 크기
@@ -44,7 +46,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false)
+        if (isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying== false)
         {
             // 점프
             if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
@@ -386,11 +388,12 @@ public class Player : MonoBehaviour
     }
     private void EnemyAtk(int damage) // 애니메이션 트리거 활용
     {
-        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos[0].position, boxSize[0], 0);
+        Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(pos[0].position, boxSize[0], 0); 
         foreach (Collider2D collider in collider2Ds)
         {
             if (collider.tag == "Enemy")
             {
+                Debug.Log("공격");
                 collider.GetComponent<EnemyHP>().TakeDamage(damage);
             }
         }
@@ -404,7 +407,7 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
 
-        if (isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false)
+        if (isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false && isCutScenePlaying == false)
         {
             float h = Input.GetAxisRaw("Horizontal");
             rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);

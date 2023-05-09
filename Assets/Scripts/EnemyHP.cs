@@ -6,6 +6,7 @@ public class EnemyHP : MonoBehaviour
 {
     [SerializeField]
     private float maxHP; // 최대 체력
+    [SerializeField]
     private float currentHP; // 현재 체력
     private bool isDie = false; // 적이 사망 s isDie를 true로 설정
     private Enemy enemy;

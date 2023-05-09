@@ -16,10 +16,10 @@ public class EnemySpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SpanwnEnemy();
+     //   SpanwnEnemy();
     }
 
-    private void SpanwnEnemy()
+    public void SpanwnEnemy()
     {
         for(int i =0; i<enemyPrefab.Length; i++)
         {
