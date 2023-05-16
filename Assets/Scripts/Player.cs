@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public float maxSpeed;
     public float jumpPower;
     public float clingingSpeed;
+    public float wallJumpSpeed;
     private int throwDirc = 1; // 나이프 던지는 방향
     private bool isAttacking = false; // 공격 딜레이
     private bool isThrowing = false; // 투척 딜레이
@@ -13,6 +15,8 @@ public class Player : MonoBehaviour
     private bool isClinging = false; // 매달려 있을 때
     private bool teleportAttack = false; // 텔레포트 공격 모션 중
     private bool isJumpAttacking = false; // 점프 공격 중
+    private bool leftControl = false; // 벽점프중 일정시간동안 왼쪽 키 입력 제어
+    private bool rightControl = false; // 벽점프중 일정시간동안 오른쪽 키 입력 제어
     public bool isCutScenePlaying; // 컷신 플레이 중 일때 조작이 안되게 함
 
     private int jumpNum = 0; // 점프 횟수 (최대 2 => 더블점프)
@@ -26,13 +30,18 @@ public class Player : MonoBehaviour
     private EnemyHP enemy; // enemy 정보
     private Transform playerPos;
     [SerializeField]
-    private Background_Scroller background_Scroller;
+    private Background_Scroller background_Scroller; // 배경
     [SerializeField]
     private Transform throwPos; // 발사체 생성 위치
     [SerializeField]
     private GameObject knifePrefab; //  발사체 프리팹
     [SerializeField]
-    private ThrowThings throwThings;
+    private ThrowThings throwThings; // 발사체 플립
+
+    [Header("PlayerSkill_UI")]
+    [SerializeField]
+    private PlayerSkillUI Skills_UI;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -209,6 +218,7 @@ public class Player : MonoBehaviour
     private IEnumerator ThrowKnifeCoolTime() // Throw Skill 쿨타임
     {
         float ThrowCoolTime = 8f;
+        Skills_UI.UsingSkill(8f);
         while (ThrowCoolTime >= 0) // 쿨타임
         {
             //   Debug.Log(ThrowCoolTime);
@@ -248,7 +258,7 @@ public class Player : MonoBehaviour
         bool keyEvent = false;
         while(atkDelay >= 0)
         {
-            if (!keyEvent && !isAttacking&& !isClinging && !isJumpAttacking &&!isThrowing && Input.GetKeyDown(KeyCode.Z))
+            if (!keyEvent && !isAttacking&& !isClinging && !isJumpAttacking &&!isThrowing && Input.GetKeyDown(KeyCode.Z)) // 표식이 생기고 한번더 z 
             {
                 keyEvent = true;
                 teleportAttack = true;
@@ -269,6 +279,7 @@ public class Player : MonoBehaviour
                 }
                 X_Flip();
                 rigid.gravityScale = .25f;
+                Skills_UI.TeleAtkEnd();
                 rigid.velocity = new Vector2(0, 0); // 속도 초기화
                 anim.SetBool("isJumpping", false);
                 yield return new WaitForSeconds(.9f);
@@ -335,7 +346,7 @@ public class Player : MonoBehaviour
     {
         Debug.DrawRay(rigid.position, Vector3.right * h, new Color(0, 1, 0));
         // 빔에 맞은 오브젝트의 정보
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.right * h, 1, LayerMask.GetMask("Wall"));
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.right * h, .5f, LayerMask.GetMask("Wall"));
         // 관통 x
         if (rayHit.collider != null)
         {
@@ -343,8 +354,8 @@ public class Player : MonoBehaviour
             if (rayHit.distance < .5f)
             {
                 anim.SetBool("isClinging", true);
-                jumpNum = 1;
-                //  StartCoroutine(IsClinging(h));
+                jumpNum = 1; // 점프 초기화
+                StartCoroutine(IsClinging(h));
             }
         }
         else
@@ -353,7 +364,7 @@ public class Player : MonoBehaviour
         }
 
     }
-    private IEnumerator IsClinging(float h)
+    private IEnumerator IsClinging(float h) // 벽 점프 코루틴
     {
         isClinging = true;
         while (true)
@@ -362,16 +373,37 @@ public class Player : MonoBehaviour
             {
                 break;
             }
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space)) // 점프
             {
-
-                rigid.AddForce(new Vector2(-h, 2) * 5, ForceMode2D.Impulse);
-                anim.SetBool("isClinging", false);
+                StartCoroutine(ClingingKeyControl(h));
+                rigid.velocity = new Vector2(wallJumpSpeed* -h, jumpPower); // 점프
+                anim.SetBool("isClinging", false); 
+                isClinging = false;
                 break;
             }
             yield return null;
         }
         isClinging = false;
+    }
+    private IEnumerator ClingingKeyControl(float h) // 벽 점프를 한 일정시간동안 점프 반대 방향 키 제어
+    {
+        if(h > 0)
+        {
+            rightControl = true;
+        }
+        else
+        {
+            leftControl = true;
+        }
+        yield return new WaitForSeconds(.1f);
+        if (h > 0)
+        {
+            rightControl = false;
+        }
+        else
+        {
+            leftControl = false;
+        }
     }
     private IEnumerator JumpAttack() // 점프 공격 코루틴
     {
@@ -447,6 +479,10 @@ public class Player : MonoBehaviour
         if (isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false && isCutScenePlaying == false)
         {
             float h = Input.GetAxisRaw("Horizontal");
+            if((leftControl && h == -1) || (rightControl && h == 1)) // 키 제어 중 입력이 들어오면 h 값 초기화
+            {
+                h = 0;
+            }
             rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
             if (anim.GetBool("isJumpping") && h != 0) // 점프 중일때 벽타기 인식

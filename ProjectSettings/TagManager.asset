@@ -9,6 +9,7 @@ TagManager:
   - PlayerDamage
   - Wall
   - Shot
+  - SkillUI
   layers:
   - Default
   - TransparentFX

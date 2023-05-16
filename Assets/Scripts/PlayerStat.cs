@@ -6,6 +6,7 @@ public class PlayerStat : MonoBehaviour
 {
     [SerializeField]
     private float maxHP = 100f; // 최대 체력
+    [SerializeField]
     private float curHP; // 현재 체력
 
     public float MaxHP => maxHP;

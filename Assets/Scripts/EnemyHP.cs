@@ -48,6 +48,7 @@ public class EnemyHP : MonoBehaviour
     {
         if (hitType == 2)
         {
+            GameObject.FindWithTag("SkillUI").GetComponent<PlayerSkillUI>().TeleAtkOn();
             SpawnMark();
             if (enemyType == 0)
             {
@@ -61,6 +62,7 @@ public class EnemyHP : MonoBehaviour
         if (damage == 5)
         {
             Destroy(markClone);
+          //  GameObject.FindWithTag("SkillUI").GetComponent<PlayerSkillUI>().TeleAtkEnd();
         }
         // Tip. 적의 체력이 damage 만큼 감소해서 죽을 상황일 때 여러 타워의 공격을 동시에 받으면
         // enemy.OnDie() 함수가 여러 번 실행될 수 있다,
