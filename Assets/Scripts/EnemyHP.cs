@@ -50,6 +50,7 @@ public class EnemyHP : MonoBehaviour
         {
             GameObject.FindWithTag("SkillUI").GetComponent<PlayerSkillUI>().TeleAtkOn();
             SpawnMark();
+            GameObject.FindWithTag("Player").GetComponent<Player>().SpecialAttack(this, 0);
             if (enemyType == 0)
             {
                 GameObject.FindWithTag("Player").GetComponent<Player>().SpecialAttack(this, 0);
@@ -81,7 +82,14 @@ public class EnemyHP : MonoBehaviour
         if (currentHP <= 0)
         {
              isDie = true;
-            anim.SetTrigger("Enemy_Exp");
+            if(enemyType == 0)
+            {
+                anim.SetTrigger("Enemy_Exp");
+            }
+            else if (enemyType == 1)
+            {
+                anim.SetTrigger("ShieldRobotDeath");
+            }
             // 적 캐릭터 사망
             //enemy.OnDie(EnemyDestroyType.kill);
         }
@@ -104,7 +112,7 @@ public class EnemyHP : MonoBehaviour
         color.a = 1.0f;
         spriteRenderer.color = color;
     }
-    public void EnemyDie()
+    public void EnemyDie() // 애니메이션 트리거
     {
         Destroy(gameObject);
     }

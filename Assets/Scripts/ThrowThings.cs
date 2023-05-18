@@ -28,8 +28,7 @@ public class ThrowThings : MonoBehaviour
         }
         else if (throwingType == 2 && collision.CompareTag ( "Player")) // Enemy Shot
         {
-            collision.GetComponent<PlayerStat>().TakeDamage(5f);
-            collision.GetComponent<Player>().OnDamaged(pos.position);
+            collision.GetComponent<Player>().OnDamaged(pos.position,5f);
         }
         StopAllCoroutines();
         Destroy(gameObject);

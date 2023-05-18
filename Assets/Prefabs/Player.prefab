@@ -333,6 +333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 100
+  curHP: 0
 --- !u!1 &5480711141743376901
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public float maxSpeed;
@@ -23,6 +22,7 @@ public class Player : MonoBehaviour
     public Transform[] pos;  // 히팅 박스 위치
     public Vector2[] boxSize; // 박스 크기
 
+    private PlayerStat playerStat; // 플레이어 스탯
     private Rigidbody2D rigid;
     private CapsuleCollider2D capsuleColider;
     private SpriteRenderer spriteRenderer;
@@ -45,6 +45,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        playerStat = GetComponent<PlayerStat>();
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
@@ -244,7 +245,7 @@ public class Player : MonoBehaviour
         isThrowing = false; // 던지는 모션 끝
 
     }
-    public void SpecialAttack(EnemyHP enemy,int enemyMoveDirection) // Enemy가 나이프에 맞았을 때
+    public void SpecialAttack(EnemyHP enemy, int enemyMoveDirection) // Enemy가 나이프에 맞았을 때
     {
         Debug.Log(enemy.name);
         this.enemy = enemy;
@@ -256,9 +257,9 @@ public class Player : MonoBehaviour
     {
         float atkDelay = 5f;
         bool keyEvent = false;
-        while(atkDelay >= 0)
+        while (atkDelay >= 0)
         {
-            if (!keyEvent && !isAttacking&& !isClinging && !isJumpAttacking &&!isThrowing && Input.GetKeyDown(KeyCode.Z)) // 표식이 생기고 한번더 z 
+            if (!keyEvent && !isAttacking && !isClinging && !isJumpAttacking && !isThrowing && Input.GetKeyDown(KeyCode.Z)) // 표식이 생기고 한번더 z 
             {
                 keyEvent = true;
                 teleportAttack = true;
@@ -290,7 +291,7 @@ public class Player : MonoBehaviour
             atkDelay -= Time.deltaTime;
             yield return null;
         }
-        
+
         /*
         Debug.Log("코루틴");
         teleportAttack = true;
@@ -376,8 +377,8 @@ public class Player : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space)) // 점프
             {
                 StartCoroutine(ClingingKeyControl(h));
-                rigid.velocity = new Vector2(wallJumpSpeed* -h, jumpPower); // 점프
-                anim.SetBool("isClinging", false); 
+                rigid.velocity = new Vector2(wallJumpSpeed * -h, jumpPower); // 점프
+                anim.SetBool("isClinging", false);
                 isClinging = false;
                 break;
             }
@@ -387,7 +388,7 @@ public class Player : MonoBehaviour
     }
     private IEnumerator ClingingKeyControl(float h) // 벽 점프를 한 일정시간동안 점프 반대 방향 키 제어
     {
-        if(h > 0)
+        if (h > 0)
         {
             rightControl = true;
         }
@@ -421,8 +422,9 @@ public class Player : MonoBehaviour
         }
         isJumpAttacking = false;
     }
-    public void OnDamaged(Vector2 targetPosition)
+    public void OnDamaged(Vector2 targetPosition, float damage)
     {
+        playerStat.TakeDamage(damage);
         // 레이어를 PlayerDamaged로 바꿈
         gameObject.layer = 11;
         gameObject.tag = "PlayerDamage";
@@ -479,7 +481,7 @@ public class Player : MonoBehaviour
         if (isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false && isCutScenePlaying == false)
         {
             float h = Input.GetAxisRaw("Horizontal");
-            if((leftControl && h == -1) || (rightControl && h == 1)) // 키 제어 중 입력이 들어오면 h 값 초기화
+            if ((leftControl && h == -1) || (rightControl && h == 1)) // 키 제어 중 입력이 들어오면 h 값 초기화
             {
                 h = 0;
             }
