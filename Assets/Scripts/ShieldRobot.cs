@@ -29,8 +29,9 @@ public class ShieldRobot : MonoBehaviour
     {
         anim.SetBool("isWalking", false);
         isAttacking = true;
+        yield return new WaitForSeconds(1f);
         anim.SetTrigger("isAttacking");
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(3f);
         isAttacking = false;
     }
     private void ShieldRobotAttack()  // 애니메이션 트리거

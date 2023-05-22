@@ -82,7 +82,9 @@ public class EnemyHP : MonoBehaviour
         if (currentHP <= 0)
         {
              isDie = true;
-            if(enemyType == 0)
+            gameObject.layer = 10;
+            gameObject.tag = "EnemyDeath";
+            if (enemyType == 0)
             {
                 anim.SetTrigger("Enemy_Exp");
             }
