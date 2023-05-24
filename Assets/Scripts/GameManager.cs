@@ -30,47 +30,27 @@ public class GameManager : MonoBehaviour
         player.isCutScenePlaying = true;
         bool end = false;
         screenSlider.value = 0;
-        while(true) // 컷신 전 슬라이드 작동
+        while(screenSlider.value != 1) // 컷신 전 슬라이드 작동
         {
-            if (!end)
-            {
-                screenSlider.value += Time.deltaTime;
-            }
-            else if(end)
-            {
-                screenSlider.value -= Time.deltaTime;
-            }
-            if (screenSlider.value >= 1)
-            {
-                end = true;
-            }
-            if(end && screenSlider.value == 0)
-            {
-                break;
-            }
+            screenSlider.value += Time.deltaTime;
             yield return null;
         }
         cutScene[sceneNumber].PlayCutScene(delay); // 컷신 플레이
-        yield return new WaitForSeconds(delay); // 컷신 딜레이 만큼 멈추기
-        end = false;
-        while (true) // 컷신 후 슬라이드 작동
+        while (screenSlider.value != 0) // 컷신 전 슬라이드 작동
         {
-            if (!end)
-            {
-                screenSlider.value += Time.deltaTime;
-            }
-            else if (end)
-            {
-                screenSlider.value -= Time.deltaTime;
-            }
-            if (screenSlider.value >= 1)
-            {
-                end = true;
-            }
-            if (end && screenSlider.value == 0)
-            {
-                break;
-            }
+            screenSlider.value -= Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(delay); // 컷신 딜레이 만큼 멈추기
+        while (screenSlider.value != 1) // 컷신 전 슬라이드 작동
+        {
+            screenSlider.value += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(1f);
+        while (screenSlider.value != 0) // 컷신 전 슬라이드 작동
+        {
+            screenSlider.value -= Time.deltaTime;
             yield return null;
         }
         player.isCutScenePlaying = false;

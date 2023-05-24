@@ -502,12 +502,12 @@ public class Player : MonoBehaviour
             }
             if (rigid.velocity.x > maxSpeed) // Right MaxSpeed
             {
-                background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
+              //  background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
                 rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
             }
             else if (rigid.velocity.x < maxSpeed * (-1)) // Left MaxSpeed
             {
-                background_Scroller.BG_Scroll(-0.1f); // 왼쪽으로 배경 스크롤
+               // background_Scroller.BG_Scroll(-0.1f); // 왼쪽으로 배경 스크롤
                 rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
             }
 

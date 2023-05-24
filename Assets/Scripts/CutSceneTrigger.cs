@@ -70,7 +70,7 @@ public class CutSceneTrigger : MonoBehaviour
                     }
                     else if(stageNum == 2)
                     {
-                        StartCoroutine(PlayCutScene(0, 21f));
+                        StartCoroutine(PlayCutScene(0, 20.5f));
                     }
                 }
 
