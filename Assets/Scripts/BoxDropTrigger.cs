@@ -40,9 +40,5 @@ public class BoxDropTrigger : MonoBehaviour
             yield return new WaitForSeconds(3f);
         }
     }
-    // Update is called once per frame
-    void Update()
-    {
 
-    }
 }
