@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     private StageNameAlpha stageNameAlpha; // 스테이지 이름 
     [SerializeField]
     private BoxDropTrigger boxDropTrigger;
+    [SerializeField]
+    private GuideWindow teleportGuideWindow; // 라퓨타 컷신 1이 끝나고 나오는 도움말 창
     public float slideSpeed;
     // Start is called before the first frame update
     void Start()
@@ -58,10 +60,16 @@ public class GameManager : MonoBehaviour
         }
         player.isCutScenePlaying = false;
         yield return new WaitForSeconds(.5f);
-        if(stageNum == 2  && sceneNumber == 0) // 스테이지 2의 0번 컷신이 진행 되고 난 후 스테이지 창 출력
-        {
-           
-            stageNameAlpha.StartAlpha();
+        if(stageNum == 2 ) // 스테이지 2의 0번 컷신이 진행 되고 난 후 스테이지 창 출력
+        {    
+            if(sceneNumber == 0)
+            {
+                stageNameAlpha.StartAlpha();
+            }
+            else if(sceneNumber == 1)
+            {
+                teleportGuideWindow.GuideOn();
+            }
         }
     }
     public void PlayCutScene(int sceneNumber, float delay)

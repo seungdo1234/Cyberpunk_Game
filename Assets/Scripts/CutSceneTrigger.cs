@@ -18,7 +18,7 @@ public class CutSceneTrigger : MonoBehaviour
     private int stageNum;
     [SerializeField]
     private GameObject transparentWall; // 컷신이 끝나도 전으로 못가게 하기위한 투명벽
-
+    [SerializeField]
     private int triggerNum = 0; // 트리거 레이어 위치
     private int sceneNum = 1; // 불러올 씬 넘버
     private bool cutScenePlaying; // 컷신 플레이 중
@@ -41,7 +41,7 @@ public class CutSceneTrigger : MonoBehaviour
             enemySpawner.SpanwnEnemy();
             dropLayer.SpawnPointChange();
         }
-        if(stageNum == 2)
+        if(stageNum == 2 && triggerNum == 0)
         {
             transparentWall.SetActive(true);
         }
@@ -68,9 +68,16 @@ public class CutSceneTrigger : MonoBehaviour
                     {
                         StartCoroutine(PlayCutScene(sceneNum, 7.5f));   
                     }
-                    else if(stageNum == 2)
+                    else if(stageNum == 2 )
                     {
-                        StartCoroutine(PlayCutScene(0, 20.5f));
+                        if(triggerNum == 0)
+                        {
+                            StartCoroutine(PlayCutScene(0, 20.5f));
+                        }
+                        else if (triggerNum == 1)
+                        {
+                            StartCoroutine(PlayCutScene(1, 34f));
+                        }
                     }
                 }
 
