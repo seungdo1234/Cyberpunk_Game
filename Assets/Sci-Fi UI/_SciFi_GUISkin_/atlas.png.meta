@@ -252,12 +252,12 @@ TextureImporter:
       name: jotstick_back
       rect:
         serializedVersion: 2
-        x: 2082
-        y: 3077
-        width: 961
-        height: 963
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 2081
+        y: 3083
+        width: 957
+        height: 957
+      alignment: 9
+      pivot: {x: 0.47122303, y: 0.53}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -273,10 +273,10 @@ TextureImporter:
       name: joystikc
       rect:
         serializedVersion: 2
-        x: 3161
-        y: 3547
-        width: 514
-        height: 514
+        x: 3166
+        y: 3553
+        width: 497
+        height: 499
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -881,7 +881,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: ae2beb0bc9a940a409c56ba242325532
     internalID: 0
     vertices: []
     indices: 

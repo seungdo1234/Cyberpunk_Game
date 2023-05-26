@@ -12,6 +12,7 @@ TagManager:
   - SkillUI
   - EnemyDeath
   - Box
+  - TeleportCrystal
   layers:
   - Default
   - TransparentFX
@@ -26,8 +27,8 @@ TagManager:
   - EnemyDeath
   - PlayerDamaged
   - Box
-  - 
-  - 
+  - TeleportCrystal
+  - UsingCrystal
   - 
   - 
   - 

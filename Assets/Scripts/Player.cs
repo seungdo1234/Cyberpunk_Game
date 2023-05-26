@@ -22,6 +22,18 @@ public class Player : MonoBehaviour
     public Transform[] pos;  // 히팅 박스 위치
     public Vector2[] boxSize; // 박스 크기
 
+    [Header("Teleport")]
+    [SerializeField]
+    private float radius; // 텔레포트 원 반지름
+    [SerializeField]
+    private LayerMask crystalLayer; // 텔레포트 주체인 크리스탈 레이어 설정
+    [SerializeField]
+    private GameObject teleportCircle; // 쉬프트 누를 때 나오는 텔레포트 범위 오브젝트
+    [SerializeField]
+    private GameObject teleportTarget; // 텔레포트 대상 크리스탈 선택 오브젝트
+    private bool isTeleportReady; // 쉬프트를 누르고 있는지
+    private bool teleportAnim; // 텔레포트 애니메이션이 나오고 있는지
+
     private PlayerStat playerStat; // 플레이어 스탯
     private Rigidbody2D rigid;
     private CapsuleCollider2D capsuleColider;
@@ -29,8 +41,8 @@ public class Player : MonoBehaviour
     private Animator anim;
     private EnemyHP enemy; // enemy 정보
     private Transform playerPos;
-    [SerializeField]
-    private Background_Scroller background_Scroller; // 배경
+
+    [Header("ThrowKnife")]
     [SerializeField]
     private Transform throwPos; // 발사체 생성 위치
     [SerializeField]
@@ -56,7 +68,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying == false)
+        if (!teleportAnim && !isTeleportReady && isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying == false)
         {
             // 점프
             if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
@@ -113,7 +125,14 @@ public class Player : MonoBehaviour
                 StartCoroutine(IsThrowing()); // 던지기
                 StartCoroutine(ThrowKnifeCoolTime());  // 쿨타임
             }
-
+            if (!isTeleportReady && Input.GetKey(KeyCode.LeftShift))
+            {
+                StartCoroutine(TeleportOn());
+            }
+        }
+        if (isTeleportReady && !Input.GetKey(KeyCode.LeftShift))
+        {
+            isTeleportReady = false;
         }
         //Debug.Log(ThrowSkill);
     }
@@ -469,16 +488,86 @@ public class Player : MonoBehaviour
             }
         }
     }
+    private IEnumerator TeleportOn()
+    {
+        int targerNum = 0;
+
+        teleportCircle.SetActive(true);
+        isTeleportReady = true;
+        Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(transform.position, radius, crystalLayer);
+        Time.timeScale = 0f;
+        if (collider2Ds.Length > 0)
+        {
+            teleportTarget.SetActive(true);
+            while (isTeleportReady)
+            {
+
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    if (targerNum == 0)
+                    {
+                        targerNum = collider2Ds.Length - 1;
+                    }
+                    else
+                    {
+                        targerNum -= 1;
+                    }
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    if (targerNum == collider2Ds.Length - 1)
+                    {
+                        targerNum = 0;
+                    }
+                    else
+                    {
+                        targerNum += 1;
+                    }
+                }
+                teleportTarget.transform.position = collider2Ds[targerNum].transform.position;
+                yield return null;
+            }
+
+            Time.timeScale = 1f;
+            rigid.velocity = new Vector2(0, 0);
+            rigid.gravityScale = .25f;
+            teleportCircle.SetActive(false);
+            teleportTarget.SetActive(false);
+            teleportAnim = true;
+            anim.SetTrigger("Teleport");
+            yield return new WaitForSeconds(.55f);
+
+            transform.position = collider2Ds[targerNum].transform.position;
+            collider2Ds[targerNum].GetComponent<Crystal>().CrystalUse();
+            rigid.velocity = new Vector2(0, 0);
+            yield return new WaitForSeconds(.3f);
+            rigid.gravityScale = 1f;
+            teleportAnim = false;
+            jumpNum = 1;
+        }
+        else
+        {
+            while (isTeleportReady)
+            {
+                yield return null;
+            }
+            Time.timeScale = 1f;
+            teleportCircle.SetActive(false);
+        }
+    }
+
     private void OnDrawGizmos() // 공격 범위는 눈에 보이지 않기 때문에 기즈모를 활용하여 그림-
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(pos[0].position, boxSize[0]);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
     // 연속적 입력은 FixedUpdate
     void FixedUpdate()
     {
 
-        if (isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false && isCutScenePlaying == false)
+        if (!teleportAnim && !isTeleportReady && isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false && isCutScenePlaying == false)
         {
             float h = Input.GetAxisRaw("Horizontal");
             if ((leftControl && h == -1) || (rightControl && h == 1)) // 키 제어 중 입력이 들어오면 h 값 초기화
@@ -502,12 +591,12 @@ public class Player : MonoBehaviour
             }
             if (rigid.velocity.x > maxSpeed) // Right MaxSpeed
             {
-              //  background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
+                //  background_Scroller.BG_Scroll(0.1f); // 오른쪽으로 배경 스크롤
                 rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
             }
             else if (rigid.velocity.x < maxSpeed * (-1)) // Left MaxSpeed
             {
-               // background_Scroller.BG_Scroll(-0.1f); // 왼쪽으로 배경 스크롤
+                // background_Scroller.BG_Scroll(-0.1f); // 왼쪽으로 배경 스크롤
                 rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
             }
 
@@ -528,7 +617,7 @@ public class Player : MonoBehaviour
                 if (rayHit.collider != null)
                 {
                     // distance : Ray에 닿았을 때의 거리
-                    if (rayHit.distance < 1.0f) // 땅에 착지 했을 때
+                    if (rayHit.distance < 1f) // 땅에 착지 했을 때
                     {
                         jumpNum = 0; // 점프 횟수 초기화 
                         // 점프 애니메이션 초기화
