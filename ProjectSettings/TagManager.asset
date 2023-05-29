@@ -13,6 +13,8 @@ TagManager:
   - EnemyDeath
   - Box
   - TeleportCrystal
+  - JumpPlatform
+  - EnemyPlatform
   layers:
   - Default
   - TransparentFX
@@ -29,8 +31,8 @@ TagManager:
   - Box
   - TeleportCrystal
   - UsingCrystal
-  - 
-  - 
+  - JumpPlatform
+  - EnemyPlatform
   - 
   - 
   - 

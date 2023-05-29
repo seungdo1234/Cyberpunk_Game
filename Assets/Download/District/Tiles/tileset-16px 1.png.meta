@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: bca82cf983f75a54d9f5a45f4b81c0ee
+guid: 7de7fbd878ddad44286249c783fd1af9
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -234,9 +234,9 @@ TextureImporter:
       name: tileset-16px_6
       rect:
         serializedVersion: 2
-        x: 67
+        x: 70
         y: 240
-        width: 48
+        width: 42
         height: 7
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -575,7 +575,7 @@ TextureImporter:
         width: 5
         height: 21
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

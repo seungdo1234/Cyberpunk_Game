@@ -193,6 +193,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 6
   jumpPower: 11
+  downJumpPower: 3
   clingingSpeed: 0.7
   wallJumpSpeed: 3
   isCutScenePlaying: 0
@@ -202,7 +203,14 @@ MonoBehaviour:
   boxSize:
   - {x: 1.3, y: 1.2}
   - {x: 0, y: 0}
-  background_Scroller: {fileID: 0}
+  radius: 6
+  crystalLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  teleportCircle: {fileID: 2864223825385620413, guid: f72941cec308dc64d9218a7885b285ee, type: 3}
+  teleportTarget: {fileID: 6809830483561216590, guid: f833e0546ca567c44818039da1f63c21, type: 3}
+  teleportSlider: {fileID: 0}
+  emptyGuideAlpha: {fileID: 0}
   throwPos: {fileID: 7792483078630712538}
   knifePrefab: {fileID: 7744404704031754915, guid: 7b049847463160248b67196b38b9c777, type: 3}
   throwThings: {fileID: -1716849846618814618, guid: 7b049847463160248b67196b38b9c777, type: 3}

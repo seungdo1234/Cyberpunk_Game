@@ -1,9 +1,11 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public float maxSpeed;
     public float jumpPower;
+    public float downJumpPower;
     public float clingingSpeed;
     public float wallJumpSpeed;
     private int throwDirc = 1; // 나이프 던지는 방향
@@ -31,6 +33,12 @@ public class Player : MonoBehaviour
     private GameObject teleportCircle; // 쉬프트 누를 때 나오는 텔레포트 범위 오브젝트
     [SerializeField]
     private GameObject teleportTarget; // 텔레포트 대상 크리스탈 선택 오브젝트
+    [SerializeField]
+    private Slider teleportSlider;  // 텔레포트 게이지
+    [SerializeField]
+    private EmptyGuideAlpha emptyGuideAlpha; // 게이지가 없을 때 나오는 문구;
+    private bool playingEmptyGuide; // EmptyGuide창이 나오고 있다면 
+
     private bool isTeleportReady; // 쉬프트를 누르고 있는지
     private bool teleportAnim; // 텔레포트 애니메이션이 나오고 있는지
 
@@ -70,14 +78,25 @@ public class Player : MonoBehaviour
     {
         if (!teleportAnim && !isTeleportReady && isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying == false)
         {
-            // 점프
-            if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
+            // 위 점프
+            if (!Input.GetKey(KeyCode.DownArrow) && Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
             {
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 anim.SetBool("isJumpping", true);
                 jumpNum++;
                 StartCoroutine(DoubleJump());
             }
+            // 아래 점프
+            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKeyUp(KeyCode.Space))
+            {
+                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("JumpPlatform"));
+                if (rayHit.collider != null)
+                {
+                    rayHit.collider.GetComponent<JumpPlatform>().PlayerDownJump();
+                    rigid.AddForce(Vector2.down * downJumpPower, ForceMode2D.Impulse);
+                }
+            }
+
             if (anim.GetBool("isJumpping")) // 점프 중일 떄
             {
                 if (isJumpAttacking == false && Input.GetKeyDown(KeyCode.LeftControl)) // 점프공겨
@@ -86,6 +105,7 @@ public class Player : MonoBehaviour
                     StartCoroutine(JumpAttack());
                 }
             }
+
 
             // Stop Speed
             if (Input.GetButtonUp("Horizontal"))
@@ -125,16 +145,21 @@ public class Player : MonoBehaviour
                 StartCoroutine(IsThrowing()); // 던지기
                 StartCoroutine(ThrowKnifeCoolTime());  // 쿨타임
             }
-            if (!isTeleportReady && Input.GetKey(KeyCode.LeftShift))
+            if (teleportSlider.value >= 0.2f && !isTeleportReady && Input.GetKey(KeyCode.LeftShift))
             {
                 StartCoroutine(TeleportOn());
+            }
+            else if(!playingEmptyGuide && teleportSlider.value < 0.2f && !isTeleportReady && Input.GetKey(KeyCode.LeftShift))
+            {
+                emptyGuideAlpha.EmptyGauge();
+                StartCoroutine(PlayingEmptyGuide());
             }
         }
         if (isTeleportReady && !Input.GetKey(KeyCode.LeftShift))
         {
             isTeleportReady = false;
         }
-        //Debug.Log(ThrowSkill);
+      //  Debug.Log(teleportSlider.value);
     }
     private void X_Flip() // 히팅 박스, ThrowPoint 플립
     {
@@ -529,6 +554,7 @@ public class Player : MonoBehaviour
             }
 
             Time.timeScale = 1f;
+            teleportSlider.value -= 0.2f;
             rigid.velocity = new Vector2(0, 0);
             rigid.gravityScale = .25f;
             teleportCircle.SetActive(false);
@@ -555,7 +581,12 @@ public class Player : MonoBehaviour
             teleportCircle.SetActive(false);
         }
     }
-
+    private IEnumerator PlayingEmptyGuide()
+    {
+        playingEmptyGuide = true;
+        yield return new WaitForSeconds(1.5f);
+        playingEmptyGuide = false;
+    }
     private void OnDrawGizmos() // 공격 범위는 눈에 보이지 않기 때문에 기즈모를 활용하여 그림-
     {
         Gizmos.color = Color.red;
@@ -612,18 +643,22 @@ public class Player : MonoBehaviour
                 }
                 Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
                 // 빔에 맞은 오브젝트의 정보
-                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
+                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "JumpPlatform"));
                 // 관통 x
                 if (rayHit.collider != null)
                 {
                     // distance : Ray에 닿았을 때의 거리
-                    if (rayHit.distance < 1f) // 땅에 착지 했을 때
+                    if (rayHit.distance < .9f) // 땅에 착지 했을 때
                     {
                         jumpNum = 0; // 점프 횟수 초기화 
                         // 점프 애니메이션 초기화
                         anim.SetBool("isJumpping", false);
                         anim.SetBool("IsJumpDown", false);
                         anim.SetBool("isClinging", false);
+                        if (rayHit.collider.CompareTag("JumpPlatform"))
+                        {
+                           // rigid.velocity = new Vector2(rigid.velocity.x, 0);
+                        }
                     }
                 }
             }
