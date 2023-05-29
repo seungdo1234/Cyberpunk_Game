@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class CutSceneTrigger : MonoBehaviour
 {
-
+    [SerializeField]
+    private Transform[] cutSceneTriggerBox; // 컷신 트리거 박스 위치
     [SerializeField]
     private bool isTrigger; // Player가 해당 Platform위에 있을 경우
     [SerializeField]
@@ -24,6 +25,10 @@ public class CutSceneTrigger : MonoBehaviour
     private bool cutScenePlaying; // 컷신 플레이 중
     private RaycastHit2D rayHit;
 
+    private void Start()
+    {
+        transform.position = cutSceneTriggerBox[triggerNum].position;
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -36,10 +41,10 @@ public class CutSceneTrigger : MonoBehaviour
         cutScenePlaying = true;
         gameManager.PlayCutScene(sceneNumber, delay);
         yield return new WaitForSeconds(delay);
-        if(stageNum == 1)
+        if(stageNum == 1 || (stageNum ==2 && triggerNum == 1) )
         {
             enemySpawner.SpanwnEnemy();
-            dropLayer.SpawnPointChange();
+          //  dropLayer.SpawnPointChange();
         }
         if(stageNum == 2 && triggerNum == 0)
         {
@@ -47,6 +52,10 @@ public class CutSceneTrigger : MonoBehaviour
         }
         triggerNum++;
         sceneNum++;
+        if(stageNum == 2 && triggerNum == 1)
+        {
+            transform.position = cutSceneTriggerBox[triggerNum].position;
+        }
         isTrigger = false;
         cutScenePlaying = false;
     }

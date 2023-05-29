@@ -233,7 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f5ecfce099a17b4c97d786446a0e06c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHP: 20
+  maxHP: 10
   currentHP: 0
   enemyType: 1
   knifeHitMarkPrefab: {fileID: 5256484413250841033, guid: 23d3c031d885c28489a9c8292d6aa055, type: 3}
