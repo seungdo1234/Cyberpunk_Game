@@ -25,10 +25,10 @@ public class DropTrigger : MonoBehaviour
     void Update()
     {
         Debug.DrawRay(layerPoint[spawnPointNum].position, Vector3.right * distance[spawnPointNum], new Color(0, 1, 0));
-        rayHit = Physics2D.Raycast(layerPoint[spawnPointNum].position, Vector3.right, distance[spawnPointNum], LayerMask.GetMask("Player", "Box")); // 오른쪽으로 레이어 발사
+        rayHit = Physics2D.Raycast(layerPoint[spawnPointNum].position, Vector3.right, distance[spawnPointNum], LayerMask.GetMask("Player", "Box", "PlayerDamaged")); // 오른쪽으로 레이어 발사
         if (rayHit.collider != null)
         {
-            if (rayHit.collider.tag == "Player")
+            if (rayHit.collider.tag == "Player" || rayHit.collider.tag == "PlayerDamage")
             {
                 rayHit.collider.GetComponent<PlayerStat>().TakeDamage(10f);
                 rayHit.transform.position = playerSpawnPoint[spawnPointNum].position;

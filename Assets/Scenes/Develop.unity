@@ -1036,6 +1036,7 @@ MonoBehaviour:
   - {fileID: 1533784439}
   - {fileID: 343414454}
   moveSpeed: 5
+  dirc: 1
 --- !u!212 &567291034
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3008,3 +3009,60 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ecaae98f01cddb04a9c8f4dad77cd9f3, type: 3}
+--- !u!1001 &8986336850360209517
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_RootOrder
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -14.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567051, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8986336850220567054, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}
+      propertyPath: m_Name
+      value: DroppingPlatform
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e9b47a6ff489a0947bff00b647b5e3e0, type: 3}

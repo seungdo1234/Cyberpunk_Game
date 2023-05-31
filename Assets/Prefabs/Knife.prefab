@@ -125,4 +125,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   throwDirection: 1
+  lerpTime: 0.75
   throwingType: 1

@@ -15,6 +15,7 @@ TagManager:
   - TeleportCrystal
   - JumpPlatform
   - EnemyPlatform
+  - Turret
   layers:
   - Default
   - TransparentFX
@@ -33,7 +34,7 @@ TagManager:
   - UsingCrystal
   - JumpPlatform
   - EnemyPlatform
-  - 
+  - Turret
   - 
   - 
   - 

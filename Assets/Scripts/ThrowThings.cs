@@ -5,10 +5,12 @@ public class ThrowThings : MonoBehaviour
 {
     [SerializeField]
     private int throwDirection; // 던지는 방향
+    [SerializeField]
+    private float lerpTime; // 지속시간
     private SpriteRenderer spriteRenderer;
     private Transform pos;
     [SerializeField]
-    private int throwingType;
+    private int throwingType; // 1. Knife, 2. Shot 
     // Start is called before the first frame update
     void Awake()
     {
@@ -30,18 +32,17 @@ public class ThrowThings : MonoBehaviour
         {
             collision.GetComponent<Player>().OnDamaged(pos.position,5f);
         }
-        StopAllCoroutines();
         Destroy(gameObject);
         Debug.Log(collision.gameObject.tag); // 왼쪽으로 나이프 쏠 때 플레이어 태그가 걸리는 버그있음
     }
     public IEnumerator Throwing(float throwVelocity)
     {
-        float throwing = .75f;
-        while (throwing >= 0)
+
+        float currentTime = 0f;
+        while (currentTime < lerpTime)
         {
+            currentTime += Time.deltaTime;
             transform.Translate(new Vector3(1 * throwDirection, 0, 0) * throwVelocity * Time.deltaTime);
-            throwing -= Time.deltaTime;
-            //     Debug.Log(throwing);
             yield return null;
         }
         Destroy(gameObject);

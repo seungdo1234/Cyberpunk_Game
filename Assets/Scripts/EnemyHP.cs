@@ -13,7 +13,6 @@ public class EnemyHP : MonoBehaviour
     [SerializeField]
     private GameObject knifeHitMarkPrefab; // 나이프 맞았을 때 나타는 표식 5초뒤 사라짐
     private bool isDie = false; // 적이 사망 s isDie를 true로 설정
-    private Enemy enemy;
     private SpriteRenderer spriteRenderer;
     private Animator anim;
     private GameObject markClone;
@@ -24,7 +23,6 @@ public class EnemyHP : MonoBehaviour
     private void Awake()
     {
         currentHP = maxHP; // 현재 체력을 최대 체력과 길게 설정
-        enemy = GetComponent<Enemy>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
 

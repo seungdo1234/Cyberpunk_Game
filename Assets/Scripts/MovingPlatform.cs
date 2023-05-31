@@ -8,6 +8,7 @@ public class MovingPlatform : MonoBehaviour
     private Transform[] wayPoints; // ÇÃ·§Æû ÀÌµ¿ ÇÃ·§Æû
     [SerializeField]
     private float moveSpeed; // ¿þÀÌÆ÷ÀÎÆ®¿¡ µµ´ÞÇÏ´Â ½Ã°£
+    [SerializeField]
     private int dirc = 1;
     private Rigidbody2D playerRigidbody2D;
     // Start is called before the first frame update
@@ -32,11 +33,19 @@ public class MovingPlatform : MonoBehaviour
     }
     private IEnumerator MovePlatform()
     {
-        int wayPointNum = 1;
+        int wayPointNum;
+        if(dirc == 1)
+        {
+            wayPointNum = 1;
+        }
+        else
+        {
+            wayPointNum = 0;
+        }
         while (true)
         {
             transform.position += new Vector3 ( dirc * moveSpeed * Time.deltaTime,0, 0);
-            if( dirc == 1 && transform.position.x >= wayPoints[wayPointNum].position.x)
+            if ( dirc == 1 && transform.position.x >= wayPoints[wayPointNum].position.x )
             {
                 dirc = -1;
                 wayPointNum--;
