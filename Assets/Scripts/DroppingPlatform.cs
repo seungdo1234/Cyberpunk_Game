@@ -63,7 +63,7 @@ public class DroppingPlatform : MonoBehaviour
 
         while (currentTime < powerLerpTime) // PowerOff
         {
-            float powerColor = Mathf.Lerp(1f, 0.32f, currentTime / powerLerpTime);
+            float powerColor = Mathf.Lerp(1f, 0f, currentTime / powerLerpTime);
             powerRenderer.color = new Color(powerColor, powerColor, powerColor);
             yield return null;
             currentTime += Time.deltaTime;

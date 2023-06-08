@@ -12,12 +12,10 @@ public class TurretDangerLine : MonoBehaviour
     private SpriteRenderer dangerLinespriteRenderer;
      
      
-    // Start is called before the first frame update
-    void Start()
+    public void Setup()
     {
         StartCoroutine(StartDangerLine());
     }
-
     private IEnumerator StartDangerLine()
     {
         float currentTime = 0f;
@@ -31,6 +29,5 @@ public class TurretDangerLine : MonoBehaviour
             transform.localScale = new Vector3(transform.localScale.x, scaleY, 1);
             yield return null;
         }
-        Destroy(gameObject);
     }
 }

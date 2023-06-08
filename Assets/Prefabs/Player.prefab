@@ -215,6 +215,8 @@ MonoBehaviour:
   knifePrefab: {fileID: 7744404704031754915, guid: 7b049847463160248b67196b38b9c777, type: 3}
   throwThings: {fileID: -1716849846618814618, guid: 7b049847463160248b67196b38b9c777, type: 3}
   Skills_UI: {fileID: 0}
+  dashDistance: 5
+  dashCoolTime: 3.5
 --- !u!114 &6373591085698844641
 MonoBehaviour:
   m_ObjectHideFlags: 0

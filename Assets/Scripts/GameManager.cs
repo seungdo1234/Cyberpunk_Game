@@ -21,7 +21,11 @@ public class GameManager : MonoBehaviour
     private BoxDropTrigger boxDropTrigger;
     [SerializeField]
     private GuideWindow teleportGuideWindow; // 라퓨타 컷신 1이 끝나고 나오는 도움말 창
-    public float slideSpeed;
+
+    [SerializeField]
+    private Transform[] playerSavePoints; // 플레이어 세이브 포인트
+    private int savePointNum = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,34 +34,38 @@ public class GameManager : MonoBehaviour
             PlayCutScene(0, 7f);
         }
     }
-    
-    private IEnumerator ScreenSlider(int sceneNumber, float delay)
+    private IEnumerator ScreenSlider(int type, float slideSpeed)
+    {
+        if(type == 1)
+        {
+            screenSlider.value = 0;
+            while (screenSlider.value != 1) // 컷신 전 슬라이드 작동
+            {
+                screenSlider.value += Time.deltaTime * slideSpeed;
+                yield return null;
+            }
+        }
+        if(type == 2)
+        {
+            screenSlider.value = 1;
+            while (screenSlider.value != 0) // 컷신 전 슬라이드 작동
+            {
+                screenSlider.value -= Time.deltaTime * slideSpeed;
+                yield return null;
+            }
+        }
+    }
+    private IEnumerator CutScenePlay(int sceneNumber, float delay)
     {
         player.isCutScenePlaying = true;
         screenSlider.value = 0;
-        while(screenSlider.value != 1) // 컷신 전 슬라이드 작동
-        {
-            screenSlider.value += Time.deltaTime * slideSpeed;
-            yield return null;
-        }
+        StartCoroutine(ScreenSlider(1,1));
         cutScene[sceneNumber].PlayCutScene(delay); // 컷신 플레이
-        while (screenSlider.value != 0) // 컷신 전 슬라이드 작동
-        {
-            screenSlider.value -= Time.deltaTime * slideSpeed;
-            yield return null;
-        }
+        StartCoroutine(ScreenSlider(2,1));
         yield return new WaitForSeconds(delay); // 컷신 딜레이 만큼 멈추기
-        while (screenSlider.value != 1) // 컷신 후 슬라이드 작동
-        {
-            screenSlider.value += Time.deltaTime * slideSpeed;
-            yield return null;
-        }
+        StartCoroutine(ScreenSlider(1, 1));
         yield return new WaitForSeconds(1f);
-        while (screenSlider.value != 0) // 컷신 후 슬라이드 작동
-        {
-            screenSlider.value -= Time.deltaTime * slideSpeed;
-            yield return null;
-        }
+        StartCoroutine(ScreenSlider(2, 1));
         player.isCutScenePlaying = false;
         yield return new WaitForSeconds(.5f);
         if(stageNum == 2 ) // 스테이지 2의 0번 컷신이 진행 되고 난 후 스테이지 창 출력
@@ -78,7 +86,7 @@ public class GameManager : MonoBehaviour
         {
             boxDropTrigger.StopAllCoroutines();
         }
-        StartCoroutine(ScreenSlider(sceneNumber, delay)); // 컷신 시작
+        StartCoroutine(CutScenePlay(sceneNumber, delay)); // 컷신 시작
     }
     private IEnumerator CutScenePlaying(float delay)
     {
@@ -87,9 +95,17 @@ public class GameManager : MonoBehaviour
         player.isCutScenePlaying = false;
 
     }
-    // Update is called once per frame
-    void Update()
+    
+    private IEnumerator GameOver()
     {
-        
+        StartCoroutine(ScreenSlider(1, 2));
+        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(ScreenSlider(2, 2));
+        player.transform.position = playerSavePoints[savePointNum].position;
+        player.PlayerSpawn();
+    }
+    public void PlayerDie()
+    {
+        StartCoroutine(GameOver());
     }
 }

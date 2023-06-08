@@ -16,6 +16,7 @@ TagManager:
   - JumpPlatform
   - EnemyPlatform
   - Turret
+  - PlayerDeath
   layers:
   - Default
   - TransparentFX
@@ -35,7 +36,7 @@ TagManager:
   - JumpPlatform
   - EnemyPlatform
   - Turret
-  - 
+  - PlayerDeath
   - 
   - 
   - 

@@ -10,16 +10,38 @@ public class PlayerStat : MonoBehaviour
     [SerializeField]
     private float curHP; // 현재 체력
 
+    private Player player;
     public float MaxHP => maxHP;
     public float CurHP => curHP;
 
     private void Awake()
     {
+        player = GetComponent<Player>();
         curHP = maxHP;
     }
     
     public void TakeDamage(float damage)
     {
         curHP -= damage;
+        isGameOver();
+    }
+    public void RecoveryHP(float recovery)
+    {
+        if(curHP+ recovery <= maxHP)
+        {
+            curHP += recovery;
+        }
+        else
+        {
+            curHP = maxHP;
+        }
+    }
+    private void isGameOver()
+    {
+        if(curHP <= 0)
+        {
+            player.PlayerDie();
+
+        }
     }
 }

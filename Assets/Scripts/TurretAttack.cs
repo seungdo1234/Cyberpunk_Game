@@ -13,8 +13,9 @@ public class TurretAttack : MonoBehaviour
     private float attackDelay; // DangerLine이 나오는 시간
     [Header("DangerLine")]
     [SerializeField]
-    private GameObject dangerLinePrefab; // dangerLine
-
+    private TurretDangerLine turretDangerLine; // dangerLine
+    [SerializeField]
+    private float shotDistance;
 
 
     void Awake()
@@ -29,11 +30,10 @@ public class TurretAttack : MonoBehaviour
     {
         while (true)
         {
-            // DangerLine 소환
-            GameObject dangerLine = Instantiate(dangerLinePrefab, shotPoint.position, Quaternion.identity); 
+            turretDangerLine.Setup();
             yield return new WaitForSeconds(2.5f); // DangerLine이 사라지면 Shot
             GameObject shotClone = Instantiate(shotPrefab, shotPoint.position, Quaternion.identity); // Shot 소환
-            shotClone.GetComponent<ThrowThings>().Throw(17f, dirc); // Shot 날리기
+            shotClone.GetComponent<TurretShot>().ShotSetUp(dirc, 17f, shotDistance);
             yield return new WaitForSeconds(attackDelay); // AttackDelay만큼 기다리기
         }
     }

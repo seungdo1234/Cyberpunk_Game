@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6146136434215584754}
   - component: {fileID: 6146136434215584755}
   - component: {fileID: 6146136434215584764}
-  - component: {fileID: -9035874442080837255}
+  - component: {fileID: 6578572392758197592}
   m_Layer: 7
   m_Name: EnemyShot
   m_TagString: Shot
@@ -133,7 +133,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.3}
   m_EdgeRadius: 0
---- !u!114 &-9035874442080837255
+--- !u!114 &6578572392758197592
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -142,9 +142,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6146136434215584765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87c56f01092978f41b340b6d1ad7a83b, type: 3}
+  m_Script: {fileID: 11500000, guid: 178423c2ad67c0d4d90c1f22ae377fb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  throwDirection: 1
-  lerpTime: 2.37
-  throwingType: 2
+  throwDistance: 0

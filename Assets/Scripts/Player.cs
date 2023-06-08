@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     public float downJumpPower;
     public float clingingSpeed;
     public float wallJumpSpeed;
+    public float dieLerpTime;
+    private int dirc = 1;
     private int throwDirc = 1; // 나이프 던지는 방향
     private bool isAttacking = false; // 공격 딜레이
     private bool isThrowing = false; // 투척 딜레이
@@ -38,9 +40,10 @@ public class Player : MonoBehaviour
     [SerializeField]
     private EmptyGuideAlpha emptyGuideAlpha; // 게이지가 없을 때 나오는 문구;
     private bool playingEmptyGuide; // EmptyGuide창이 나오고 있다면 
-
     private bool isTeleportReady; // 쉬프트를 누르고 있는지
     private bool teleportAnim; // 텔레포트 애니메이션이 나오고 있는지
+
+
 
     private PlayerStat playerStat; // 플레이어 스탯
     private Rigidbody2D rigid;
@@ -62,6 +65,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private PlayerSkillUI Skills_UI;
 
+    [Header("Dash")]
+    [SerializeField]
+    private float dashDistance; // Dash거리
+    [SerializeField]
+    private float dashCoolTime; // DashCoolTime
+    private bool dashOn; // 쿨타임이 지났는지
+    private bool isDashing;  // Dash를 하고있는지 ;
     // Start is called before the first frame update
     void Awake()
     {
@@ -76,10 +86,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!teleportAnim && !isTeleportReady && isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying == false)
+        if (!teleportAnim && !isTeleportReady && isAttacking == false && isThrowing == false && teleportAttack == false && isClinging == false && isCutScenePlaying == false && !isDashing)
         {
             // 위 점프
-            if (!Input.GetKey(KeyCode.DownArrow) && Input.GetButtonDown("Jump") && !anim.GetBool("isJumpping"))
+            if (!Input.GetKey(KeyCode.DownArrow) && Input.GetKeyDown(KeyCode.X) && !anim.GetBool("isJumpping"))
             {
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 anim.SetBool("isJumpping", true);
@@ -87,7 +97,7 @@ public class Player : MonoBehaviour
                 StartCoroutine(DoubleJump());
             }
             // 아래 점프
-            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKeyUp(KeyCode.Space))
+            else if (Input.GetKey(KeyCode.DownArrow) && Input.GetKeyUp(KeyCode.X))
             {
                 RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("JumpPlatform"));
                 if (rayHit.collider != null)
@@ -154,6 +164,11 @@ public class Player : MonoBehaviour
                 emptyGuideAlpha.EmptyGauge();
                 StartCoroutine(PlayingEmptyGuide());
             }
+
+            if (!dashOn && Input.GetKeyDown(KeyCode.Space))
+            {
+                PlayerDash();
+            }
         }
         if (isTeleportReady && !Input.GetKey(KeyCode.LeftShift))
         {
@@ -161,16 +176,52 @@ public class Player : MonoBehaviour
         }
       //  Debug.Log(teleportSlider.value);
     }
+    private void PlayerDash()
+    {
+        isDashing = true;
+        anim.SetTrigger("Dash");
+    }
+    private void PlayerDashMove() // Animation Event로 실행
+    {
+        rigid.velocity = Vector2.zero;
+        rigid.isKinematic = true;
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector2.right * dirc, dashDistance, LayerMask.GetMask("Wall"));
+        if (rayHit.collider != null)
+        {
+            // 벽 앞으로 이동
+            Vector2 targetPosition = new Vector2(rayHit.point.x - (0.4f * dirc), transform.position.y);
+            rigid.position = targetPosition;
+        }
+        else
+        {
+            // 벽에 막히지 않은 경우, 기존의 대쉬 이동을 수행
+            transform.position = new Vector2(transform.position.x + (dashDistance * dirc), transform.position.y);
+        }
+    }
+    private void DashFinish() // DashAnimation 끝날 때 Animation Event로 호출함 
+    {
+        isDashing = false;
+        rigid.isKinematic = false;
+        StartCoroutine(DashCoolTime());
+    }
+    private IEnumerator DashCoolTime() // Dash 쿨타임
+    {
+        dashOn = true;
+        yield return new WaitForSeconds(dashCoolTime);
+        dashOn = false;
+    }
     private void X_Flip() // 히팅 박스, ThrowPoint 플립
     {
         if (spriteRenderer.flipX == true)
         {
+            dirc = -1;
             throwDirc = -1; // 나이프 이동 방향
             throwPos.position = new Vector3(playerPos.position.x - 1f, playerPos.position.y + 0.1f, 0); // 나이프 스폰 포인트 
             pos[0].position = new Vector3(playerPos.position.x - 1.1f, playerPos.position.y, 0); // 히팅 박스
         }
         else
         {
+            dirc = 1;
             throwDirc = 1;
             throwPos.position = new Vector3(playerPos.position.x + 1f, playerPos.position.y + 0.1f, 0);
             pos[0].position = new Vector3(playerPos.position.x + 1.1f, playerPos.position.y, 0);
@@ -186,9 +237,8 @@ public class Player : MonoBehaviour
                 break;
             }
             yield return null;
-            if (isJumpAttacking == false && jumpNum == 1 && Input.GetKeyDown(KeyCode.Space)) // 더블점프
+            if (!isClinging&& isJumpAttacking == false && jumpNum == 1 && Input.GetKeyDown(KeyCode.X)) // 더블점프
             {
-
                 rigid.velocity = new Vector2(rigid.velocity.x, 0);
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 anim.SetBool("IsJumpDown", true);
@@ -398,8 +448,8 @@ public class Player : MonoBehaviour
             // distance : Ray에 닿았을 때의 거리
             if (rayHit.distance < .5f)
             {
+                jumpNum = 0;
                 anim.SetBool("isClinging", true);
-                jumpNum = 1; // 점프 초기화
                 StartCoroutine(IsClinging(h));
             }
         }
@@ -411,22 +461,30 @@ public class Player : MonoBehaviour
     }
     private IEnumerator IsClinging(float h) // 벽 점프 코루틴
     {
+        float delay = 0f;
         isClinging = true;
+
         while (true)
         {
-            if (!anim.GetBool("isClinging"))
+            yield return null;
+            if (!anim.GetBool("isClinging")) // 매달리기가 애니메이션이 끝나도 반응속도 차이가 있기 때문에 일정 시간 만큼은 점프를 할 수 있게 함.
             {
-                break;
+                delay += Time.deltaTime;
+                if(delay> 0.5f)
+                {
+                    break;
+                }
             }
-            if (Input.GetKeyDown(KeyCode.Space)) // 점프
+            if (Input.GetKeyDown(KeyCode.X)) // 점프
             {
                 StartCoroutine(ClingingKeyControl(h));
                 rigid.velocity = new Vector2(wallJumpSpeed * -h, jumpPower); // 점프
                 anim.SetBool("isClinging", false);
                 isClinging = false;
+                yield return new WaitForSeconds(.5f);
+                jumpNum++; // 점프 초기화
                 break;
             }
-            yield return null;
         }
         isClinging = false;
     }
@@ -556,7 +614,7 @@ public class Player : MonoBehaviour
             Time.timeScale = 1f;
             teleportSlider.value -= 0.2f;
             rigid.velocity = new Vector2(0, 0);
-            rigid.gravityScale = .25f;
+            rigid.isKinematic = true;
             teleportCircle.SetActive(false);
             teleportTarget.SetActive(false);
             teleportAnim = true;
@@ -565,10 +623,10 @@ public class Player : MonoBehaviour
 
             transform.position = collider2Ds[targerNum].transform.position;
             collider2Ds[targerNum].GetComponent<Crystal>().CrystalUse();
-            rigid.velocity = new Vector2(0, 0);
             yield return new WaitForSeconds(.3f);
-            rigid.gravityScale = 1f;
             teleportAnim = false;
+            yield return new WaitForSeconds(.15f);
+            rigid.isKinematic = false;
             jumpNum = 1;
         }
         else
@@ -587,6 +645,38 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         playingEmptyGuide = false;
     }
+    
+    private IEnumerator DieEffect()
+    {
+        float currentTime = 0f;
+        while (currentTime < dieLerpTime)
+        {
+            currentTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, currentTime / dieLerpTime);
+            spriteRenderer.color = new Color(alpha, alpha, alpha, alpha);
+            yield return null;
+        }
+        GameObject.Find("GameManager").GetComponent<GameManager>().PlayerDie();
+    }
+    public void PlayerSpawn()
+    {
+        rigid.isKinematic = false;
+        gameObject.layer = 3;
+        gameObject.tag = "Player";
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+        playerStat.RecoveryHP(100);
+        anim.SetBool("isJumpping", false);
+        anim.SetBool("IsJumpDown", false);
+        anim.SetBool("isClinging", false);
+    }
+    public void PlayerDie()
+    {
+        rigid.velocity = Vector2.zero;
+        rigid.isKinematic = true;
+        gameObject.layer = 18;
+        gameObject.tag = "PlayerDeath";
+        StartCoroutine(DieEffect());
+    }
     private void OnDrawGizmos() // 공격 범위는 눈에 보이지 않기 때문에 기즈모를 활용하여 그림-
     {
         Gizmos.color = Color.red;
@@ -597,8 +687,7 @@ public class Player : MonoBehaviour
     // 연속적 입력은 FixedUpdate
     void FixedUpdate()
     {
-
-        if (!teleportAnim && !isTeleportReady && isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false && isCutScenePlaying == false)
+        if (!isDashing && !teleportAnim && !isTeleportReady && isAttacking == false && isThrowing == false && teleportAttack == false && isDamaged == false && isCutScenePlaying == false)
         {
             float h = Input.GetAxisRaw("Horizontal");
             if ((leftControl && h == -1) || (rightControl && h == 1)) // 키 제어 중 입력이 들어오면 h 값 초기화
@@ -635,31 +724,24 @@ public class Player : MonoBehaviour
             // RayCast : 오브젝트 검색을 위해 Ray를 쏘는 방식
             // LayerMask : 물리 효과를 구분하는 정수 값 
             // 빔을 밑으로 한칸 쏨
-            if (rigid.velocity.y < 0)
+            if (rigid.velocity.y < -0.5f)
             {
                 if (!anim.GetBool("isJumpping")) // 점프를 누르지 않고 떨어질 때 점프 모션이 나오게 함
                 {
                     anim.SetBool("isJumpping", true);
                 }
-                Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
+                Debug.DrawRay(rigid.position - new Vector2(0, 0.67f), Vector3.down, new Color(0, 1, 0));
                 // 빔에 맞은 오브젝트의 정보
-                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "JumpPlatform"));
+                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position - new Vector2(0,0.67f), Vector3.down, .9f, LayerMask.GetMask("Platform", "JumpPlatform"));
                 // 관통 x
                 if (rayHit.collider != null)
                 {
+                    jumpNum = 0; // 점프 횟수 초기화 
+                                 // 점프 애니메이션 초기화
+                    anim.SetBool("isJumpping", false);
+                    anim.SetBool("IsJumpDown", false);
+                    anim.SetBool("isClinging", false);
                     // distance : Ray에 닿았을 때의 거리
-                    if (rayHit.distance < .9f) // 땅에 착지 했을 때
-                    {
-                        jumpNum = 0; // 점프 횟수 초기화 
-                        // 점프 애니메이션 초기화
-                        anim.SetBool("isJumpping", false);
-                        anim.SetBool("IsJumpDown", false);
-                        anim.SetBool("isClinging", false);
-                        if (rayHit.collider.CompareTag("JumpPlatform"))
-                        {
-                           // rigid.velocity = new Vector2(rigid.velocity.x, 0);
-                        }
-                    }
                 }
             }
 
