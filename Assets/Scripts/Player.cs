@@ -566,7 +566,6 @@ public class Player : MonoBehaviour
         {
             if (collider.tag == "Enemy")
             {
-                Debug.Log("АјАн");
                 collider.GetComponent<EnemyHP>().TakeDamage(damage, 1);
             }
         }
