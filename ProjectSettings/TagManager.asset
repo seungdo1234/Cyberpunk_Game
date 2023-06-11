@@ -17,6 +17,8 @@ TagManager:
   - EnemyPlatform
   - Turret
   - PlayerDeath
+  - Odium
+  - NoClingingWall
   layers:
   - Default
   - TransparentFX
@@ -37,6 +39,7 @@ TagManager:
   - EnemyPlatform
   - Turret
   - PlayerDeath
+  - NoClingingWall
   - 
   - 
   - 
@@ -48,8 +51,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Odium
   m_SortingLayers:
   - name: Default
     uniqueID: 0

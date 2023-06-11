@@ -9,20 +9,27 @@ public class EnemyHP : MonoBehaviour
     [SerializeField]
     private float currentHP; // 현재 체력
     [SerializeField]
-    private int enemyType; // 0. 터렛, 1. 솔져
+    private int enemyType; // 0. 터렛, 1. 솔져 5. 보스
     [SerializeField]
     private GameObject knifeHitMarkPrefab; // 나이프 맞았을 때 나타는 표식 5초뒤 사라짐
     private bool isDie = false; // 적이 사망 s isDie를 true로 설정
     private SpriteRenderer spriteRenderer;
     private Animator anim;
     private GameObject markClone;
+
+    private Odium odium;
+    private bool odiumPage2;
     // 외부 클래스에서 확인 할 수 있게 프로퍼티 생성 (람다식)
     public float MaxHp => maxHP;
     public float CuurentHP => currentHP;
 
     private void Awake()
     {
-        currentHP = maxHP; // 현재 체력을 최대 체력과 길게 설정
+        if(enemyType == 5)
+        {
+            odium = GetComponent<Odium>();
+        }
+        currentHP = 1; // 현재 체력을 최대 체력과 길게 설정
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
 
@@ -67,8 +74,7 @@ public class EnemyHP : MonoBehaviour
         // enemy.OnDie() 함수가 여러 번 실행될 수 있다,
 
         // 현재 적의 상태가 사망 상태이면 아래 코드를 실행하지 않는다.
-        if (isDie == true) return;
-
+        if (isDie == true || (enemyType == 5 && odium.pageTranform == true)) return;
         // 현재 체력을 damage만큼 감소
         currentHP -= damage;
         Debug.Log(currentHP);
@@ -79,16 +85,27 @@ public class EnemyHP : MonoBehaviour
 
         if (currentHP <= 0)
         {
-             isDie = true;
-            gameObject.layer = 10;
-            gameObject.tag = "EnemyDeath";
-            if (enemyType == 0)
+            if(enemyType == 5)
             {
-                anim.SetTrigger("Enemy_Exp");
+                if (!odiumPage2)
+                {
+                    odiumPage2 = true;
+                    odium.OdiumPage2();
+                }
             }
-            else if (enemyType == 1)
+            else
             {
-                anim.SetTrigger("ShieldRobotDeath");
+                isDie = true;
+                gameObject.layer = 10;
+                gameObject.tag = "EnemyDeath";
+                if (enemyType == 0)
+                {
+                    anim.SetTrigger("Enemy_Exp");
+                }
+                else if (enemyType == 1)
+                {
+                    anim.SetTrigger("ShieldRobotDeath");
+                }
             }
             // 적 캐릭터 사망
             //enemy.OnDie(EnemyDestroyType.kill);
@@ -111,6 +128,22 @@ public class EnemyHP : MonoBehaviour
         // 적의 투명도를 100%로 설정
         color.a = 1.0f;
         spriteRenderer.color = color;
+    }
+    private IEnumerator HP_Recovery(float hp)
+    {
+        float currentTime = 0f;
+        while (currentTime < 2f)
+        {
+            currentTime += Time.deltaTime;
+            float hpValue = Mathf.Lerp(0, hp, currentTime / 2f);
+            currentHP = hpValue;
+            yield return null;
+        }
+    }
+    public void OdiumRecoveryHP()
+    {
+        float hp = Mathf.Floor(maxHP / 2);
+        StartCoroutine(HP_Recovery(hp));
     }
     public void EnemyDie() // 애니메이션 트리거
     {

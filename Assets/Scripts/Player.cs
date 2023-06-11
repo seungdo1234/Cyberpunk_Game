@@ -185,7 +185,7 @@ public class Player : MonoBehaviour
     {
         rigid.velocity = Vector2.zero;
         rigid.isKinematic = true;
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector2.right * dirc, dashDistance, LayerMask.GetMask("Wall"));
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector2.right * dirc, dashDistance, LayerMask.GetMask("Wall", "NoClingingWall"));
         if (rayHit.collider != null)
         {
             // 벽 앞으로 이동
