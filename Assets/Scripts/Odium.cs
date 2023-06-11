@@ -9,16 +9,17 @@ public class Odium : MonoBehaviour
     private Vector2 boxSize; // 박스 크기
 
     [SerializeField]
-    private float dashSpeed;
+    private float[] dashSpeed;
     [SerializeField]
     private float alphaTime;
     [SerializeField]
     private LineRenderer dashAttackDangerLine;
     [SerializeField]
-    private float dashAttackDangerLineLerpTime;
+    private float[] dashAttackDangerLineLerpTime;
     [SerializeField]
     private GameObject dashAttackBox;
-    private float dashDistance = 10f;
+    [SerializeField]
+    private float[] dashDistance;
 
 
     [SerializeField]
@@ -30,6 +31,16 @@ public class Odium : MonoBehaviour
     [SerializeField]
     private Transform[] lightningWayPoints; // 라이트닝 웨이 포인트
 
+
+    [SerializeField]
+    private GameObject fire; // 라이트닝 
+    [SerializeField]
+    private ParticleSystem fireParticle; // 라이트닝 파티클
+    [SerializeField]
+    private GameObject fireDangerLine; // 라이트닝 DangerLine
+    [SerializeField]
+    private Transform[] fireWayPoints; // 라이트닝 웨이 포인트
+
     [SerializeField]
     private VirtualCameraShake cameraShake;
 
@@ -40,7 +51,7 @@ public class Odium : MonoBehaviour
     public bool pageTranform;
 
     private EnemyHP odiumHP;
-    private int odiumType = 1; // 오디움의 상태 (1페이즈, 2페이즈)
+    private int odiumType = 0; // 오디움의 상태 (1페이즈, 2페이즈)
     private int knockDownCount = 0;
     private bool isKnockDown;
     private Rigidbody2D rigid;
@@ -98,20 +109,20 @@ public class Odium : MonoBehaviour
     {
         dirc = player.transform.position.x - transform.position.x > 0 ? -1 : 1;
         X_Flip();
-        RaycastHit2D rayHit = Physics2D.Raycast(new Vector3(player.transform.position.x + (-dirc * dashDistance / 2), player.transform.position.y, 0), Vector2.right * dirc, dashDistance, LayerMask.GetMask("NoClingingWall"));
+        RaycastHit2D rayHit = Physics2D.Raycast(new Vector3(player.transform.position.x + (-dirc * dashDistance[odiumType] / 2), player.transform.position.y, 0), Vector2.right * dirc, dashDistance[odiumType], LayerMask.GetMask("NoClingingWall"));
         if (rayHit.collider != null)
         {
             rigid.position = new Vector2(rayHit.point.x + (1.5f * dirc), transform.position.y);
         }
         else
         {
-            rigid.position = new Vector3(player.transform.position.x + (-dirc * dashDistance / 2), transform.position.y, 0);
+            rigid.position = new Vector3(player.transform.position.x + (-dirc * dashDistance[odiumType] / 2), transform.position.y, 0);
         }
         anim.SetTrigger("AttackReady");
         StartCoroutine(DashAttackDangerLine());
-        yield return new WaitForSeconds(dashAttackDangerLineLerpTime);
+        yield return new WaitForSeconds(dashAttackDangerLineLerpTime[odiumType]);
 
-        float targetX = transform.position.x + (dashDistance * dirc);
+        float targetX = transform.position.x + (dashDistance[odiumType] * dirc);
         anim.SetTrigger("AttackGo");
         dashAttackBox.SetActive(true);
         while (true)
@@ -125,10 +136,37 @@ public class Odium : MonoBehaviour
             {
                 break;
             }
-            transform.Translate(Vector3.right * dashSpeed * Time.deltaTime * dirc);
+            transform.Translate(Vector3.right * dashSpeed[odiumType] * Time.deltaTime * dirc);
             yield return null;
         }
         dashAttackBox.SetActive(false);
+        if (odiumType == 1)
+        {
+            dirc *= -1;
+            X_Flip();
+            anim.SetTrigger("AttackReady");
+            StartCoroutine(DashAttackDangerLine());
+            yield return new WaitForSeconds(dashAttackDangerLineLerpTime[odiumType]);
+
+            float target = transform.position.x + (dashDistance[odiumType] * dirc);
+            anim.SetTrigger("AttackGo");
+            dashAttackBox.SetActive(true);
+            while (true)
+            {
+
+                if (dirc > 0 && target <= transform.position.x)
+                {
+                    break;
+                }
+                else if (dirc < 0 && target >= transform.position.x)
+                {
+                    break;
+                }
+                transform.Translate(Vector3.right * dashSpeed[odiumType] * Time.deltaTime * dirc);
+                yield return null;
+            }
+            dashAttackBox.SetActive(false);
+        }
         yield return new WaitForSeconds(2f);
         StartCoroutine(PositionReset());
         knockDownCount++;
@@ -137,12 +175,12 @@ public class Odium : MonoBehaviour
     {
         dashAttackDangerLine.positionCount = 2; // LineRenderer의 위치 개수 설정
         dashAttackDangerLine.SetPosition(0, rigid.position + new Vector2(0, -0.1f));
-        dashAttackDangerLine.SetPosition(1, rigid.position + new Vector2(dirc * dashDistance, -0.1f));
+        dashAttackDangerLine.SetPosition(1, rigid.position + new Vector2(dirc * dashDistance[odiumType], -0.1f));
         float currentTime = 0;
-        while (currentTime < dashAttackDangerLineLerpTime)
+        while (currentTime < dashAttackDangerLineLerpTime[odiumType])
         {
             currentTime += Time.deltaTime;
-            float width = Mathf.Lerp(0.3f, 0, currentTime / dashAttackDangerLineLerpTime);
+            float width = Mathf.Lerp(0.3f, 0, currentTime / dashAttackDangerLineLerpTime[odiumType]);
             dashAttackDangerLine.startWidth = width;
             dashAttackDangerLine.endWidth = width;
             yield return null;
@@ -167,9 +205,19 @@ public class Odium : MonoBehaviour
     {
         StartCoroutine(Alpha(1, 0));
         yield return new WaitForSeconds(alphaTime);
-        dirc = -1;
-        X_Flip();
-        transform.position = new Vector3(12, -3.8f, 0);
+        int reset = Random.Range(1, 3);
+        if(reset == 1)
+        {
+            dirc = -1;
+            X_Flip();
+            transform.position = new Vector3(12, -3.8f, 0);
+        }
+        else
+        {
+            dirc = 1;
+            X_Flip();
+            transform.position = new Vector3(-13.5f, -3.8f, 0);
+        }
         StartCoroutine(Alpha(0, 1));
         yield return new WaitForSeconds(alphaTime + 1f);
         isAttacking = false;
@@ -249,6 +297,72 @@ public class Odium : MonoBehaviour
         isKnockDown = false;
         knockDownCount = 0;
     }
+    private IEnumerator Fire(int fireNum) // 라이트닝 공격
+    {
+        int num = 0;
+        float distance, targetPos_WayPoint;
+        StartCoroutine(Alpha(1, 0)); // 위로 순간이동
+        rigid.velocity = Vector2.zero;
+        rigid.isKinematic = true;
+        yield return new WaitForSeconds(alphaTime);
+        transform.position = new Vector3(0, transform.position.y + 5f, 0);
+        StartCoroutine(Alpha(0, 1));
+        yield return new WaitForSeconds(alphaTime + 1f);
+
+        while (num < fireNum)
+        {
+            List<int> spawnFire = new List<int>();
+            int wayPoint = 0;
+            targetPos_WayPoint = Mathf.Abs(player.transform.position.x - fireWayPoints[0].position.x);
+            for (int i = 1; i < fireWayPoints.Length; i++) // 플레이어하고 가장 가까운 타일 하나 설정
+            {
+                distance = Mathf.Abs(player.transform.position.x - fireWayPoints[i].position.x);
+                if (targetPos_WayPoint >= distance)
+                {
+                    targetPos_WayPoint = distance;
+                    wayPoint = i;
+                }
+            }
+            spawnFire.Add(wayPoint);
+            int randomPos = Random.Range(2, 4);
+            for (int i = 0; i < randomPos; i++) // 랜덤으로 설정
+            {
+                bool check = false; // 중복 값 제거
+                int randomValue = Random.Range(0, fireWayPoints.Length);
+                for (int j = 0; j < spawnFire.Count; j++)
+                {
+                    if (randomValue == spawnFire[j])
+                    {
+                        i--;
+                        check = true;
+                        break;
+                    }
+                }
+                if (!check)
+                {
+                    spawnFire.Add(randomValue);
+                }
+            }
+            for (int i = 0; i < spawnFire.Count; i++) // Fire DangerLine
+            {
+                GameObject fireDangerLineClone = Instantiate(fireDangerLine, fireWayPoints[spawnFire[i]].position, Quaternion.identity);
+            }
+            yield return new WaitForSeconds(1f);
+            for (int i = 0; i < spawnFire.Count; i++) // Fire
+            {
+                GameObject fireClone = Instantiate(fire, fireWayPoints[spawnFire[i]].position, Quaternion.identity);
+                ParticleSystem fireParticleClone = Instantiate(fireParticle, new Vector3(fireWayPoints[spawnFire[i]].position.x, fireWayPoints[spawnFire[i]].position.y - 6.5f, 0), Quaternion.identity);
+            }
+            yield return new WaitForSeconds(.15f);
+            cameraShake.ShakeCamera(1f, 3, 3);
+            num++;
+            yield return new WaitForSeconds(.5f);
+        }
+        rigid.isKinematic = false;
+        yield return new WaitForSeconds(5f);
+        isKnockDown = false;
+        knockDownCount = 0;
+    }
     // Update is called once per frame
     private IEnumerator Page2_Effect()
     {
@@ -277,16 +391,17 @@ public class Odium : MonoBehaviour
     public void OdiumPage2()
     {
         StopAllCoroutines();
+        dashAttackBox.SetActive(false);
         odiumType++;
         pageTranform = true;
         StartCoroutine(Page2_Effect());
     }
     void Update()
     {
-        if (!pageTranform && !isAttacking && !isKnockDown)
+        if (!pageTranform && !isAttacking && knockDownCount < 3)
         {
             isAttacking = true;
-            int attackPattern = Random.Range(1, 3);
+            int attackPattern = Random.Range(1, 2);
             if (attackPattern == 1)
             {
                 StartCoroutine(DashAttack());
@@ -298,11 +413,18 @@ public class Odium : MonoBehaviour
         }
 
 
-        if (!pageTranform && !isKnockDown && knockDownCount == 3)
+        if (!pageTranform && !isKnockDown && knockDownCount >= 3)
         {
             isKnockDown = true;
-            int lightingNum = Random.Range(2, 5);
-            StartCoroutine(Lightning(lightingNum));
+            int num = Random.Range(2, 5);
+            if (odiumType == 0)
+            {
+                StartCoroutine(Lightning(num));
+            }
+            else if(odiumType == 1)
+            {
+                StartCoroutine(Fire(num));
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ public class EnemyHP : MonoBehaviour
         {
             odium = GetComponent<Odium>();
         }
+        //currentHP = maxHP; // 현재 체력을 최대 체력과 길게 설정
         currentHP = 1; // 현재 체력을 최대 체력과 길게 설정
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
