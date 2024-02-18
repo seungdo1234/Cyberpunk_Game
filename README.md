@@ -1,2 +1,2 @@
 # Cyberpunk_Game
-군산대 캡스톤
+사이버 펑크 게임
